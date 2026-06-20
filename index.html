@@ -222,7 +222,15 @@
         .annotation-bubble-footer { display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: var(--text-muted); }
         .btn-delete-annotation { background: none; border: none; color: var(--danger); cursor: pointer; font-weight: bold; }
 
-        .annotation-bubble img { width: 100%; max-height: 200px; object-fit: contain; border-radius: 4px; background: rgba(0,0,0,0.03); border: 1px solid var(--border-color); }
+        .annotation-bubble img { 
+            width: 100%; max-height: 200px; object-fit: contain; border-radius: 4px; 
+            background: rgba(0,0,0,0.03); border: 1px solid var(--border-color); 
+            cursor: zoom-in; transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .annotation-bubble img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
         
         /* Estilos del Dock */
         .bottom-dock {
@@ -278,6 +286,27 @@
             margin-bottom: 8px; border: 1px solid var(--border-color);
         }
 
+        /* ESTILOS DEL VISOR DE IMÁGENES (LIGHTBOX) */
+        .lightbox-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 300; display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+        }
+        .lightbox-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); cursor: pointer;
+        }
+        .lightbox-toolbar {
+            position: absolute; top: 20px; right: 20px; z-index: 310;
+            display: flex; gap: 10px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px;
+        }
+        #lightbox-img {
+            position: relative; max-width: 90%; max-height: 90%;
+            object-fit: contain; z-index: 305; transition: transform 0.1s ease-out;
+            cursor: grab;
+        }
+        #lightbox-img:active { cursor: grabbing; }
+
         #file-camera, #file-pdf, #file-import { display: none; }
     </style>
 </head>
@@ -287,7 +316,6 @@
         <header>
             <h1>Mis Procesos RMD</h1>
             <div style="display:flex; align-items:center; gap:8px;">
-                <!-- NUEVOS BOTONES DE RESPALDO/SINCRONIZACIÓN -->
                 <button class="btn-icon" id="btn-export" title="Exportar Todo (Copia de seguridad)">📤</button>
                 <button class="btn-icon" id="btn-import" title="Importar Todo">📥</button>
                 <button class="btn-icon" id="btn-theme-dash" title="Cambiar Tema">☀️</button>
@@ -302,7 +330,6 @@
         </div>
     </div>
 
-    <!-- Input oculto para la importación de respaldos -->
     <input type="file" id="file-import" accept=".json">
 
     <div id="view-editor" class="view hidden">
@@ -370,7 +397,6 @@
         </nav>
     </div>
 
-    <!-- MODAL DEL CRONÓMETRO -->
     <div id="timer-modal" class="timer-modal hidden">
         <div class="timer-box">
             <h3 style="margin-bottom:15px; font-size:1rem; color:var(--text-muted);">Medir Tiempo de Proceso</h3>
@@ -382,6 +408,16 @@
                 <button class="btn btn-secondary" style="border-color:var(--danger); color:var(--danger); flex:1;" id="btn-timer-cancel">Cancelar</button>
             </div>
         </div>
+    </div>
+
+    <div id="lightbox-modal" class="lightbox-modal hidden">
+        <div class="lightbox-overlay" id="lightbox-overlay"></div>
+        <div class="lightbox-toolbar">
+            <button class="btn-icon" style="color:white; border-color:white;" id="btn-lb-zoom-out" title="Alejar">➖</button>
+            <button class="btn-icon" style="color:white; border-color:white;" id="btn-lb-zoom-in" title="Acercar">➕</button>
+            <button class="btn-icon" style="color:#ff4d4d; border-color:#ff4d4d; margin-left:15px;" id="btn-lb-close" title="Cerrar">✖ Cerrar</button>
+        </div>
+        <img id="lightbox-img" src="" alt="Vista ampliada">
     </div>
 
     <script>
@@ -437,7 +473,8 @@
             initDragAndDropNote();
             initReplacementTrigger(); 
             initTimerOverlay(); 
-            initDataSyncEngine(); // Iniciar motor de importación/exportación
+            initDataSyncEngine(); 
+            initLightbox(); // Inicializa el visor de imágenes
             localforage.config({ name: 'ValiDocDB', storeName: 'projects_store' });
             localforage.getItem('validoc_projects').then(function(val) {
                 projects = val || [];
@@ -752,7 +789,7 @@
                 innerHTML += '<p style="font-size:0.75rem; color:var(--danger); font-weight:bold; margin-bottom:2px;">Texto Tachado: "'+ann.originalText+'"</p>';
                 innerHTML += '<textarea id="textarea-' + ann.id + '" placeholder="Sugerir reemplazo...">' + ann.text + '</textarea>';
             } else if (ann.type === 'photo') {
-                innerHTML += '<img src="' + ann.mediaUrl + '"><textarea id="textarea-' + ann.id + '" placeholder="Nota de foto...">' + ann.text + '</textarea>';
+                innerHTML += '<img src="' + ann.mediaUrl + '" class="clickable-photo" title="Clic para ampliar"><textarea id="textarea-' + ann.id + '" placeholder="Nota de foto...">' + ann.text + '</textarea>';
             } else if (ann.type === 'audio') {
                 innerHTML += '<audio controls src="' + ann.mediaUrl + '" style="width:100%; height:40px; margin-bottom:6px; outline:none;"></audio><textarea id="textarea-' + ann.id + '" placeholder="Nota de audio...">' + ann.text + '</textarea>';
             } else if (ann.type === 'timer') {
@@ -765,11 +802,21 @@
             wrapper.innerHTML = innerHTML;
             annotationLayer.appendChild(wrapper);
 
+            // Vinculación de eventos
             document.getElementById('del-' + ann.id).addEventListener('click', function() { deleteAnnotation(ann.id); });
             makeAnnotationDraggable(wrapper, ann);
 
             var textarea = document.getElementById('textarea-' + ann.id);
             if (textarea) { textarea.addEventListener('input', function(e) { ann.text = e.target.value; saveDataToStorage(); }); }
+
+            // Lógica para abrir la foto en el visor de escritorio/móvil
+            var photoImg = wrapper.querySelector('.clickable-photo');
+            if (photoImg) {
+                photoImg.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    openLightbox(ann.mediaUrl);
+                });
+            }
         }
 
         function makeAnnotationDraggable(wrapper, ann) {
@@ -945,13 +992,11 @@
             });
         }
 
-        /* ACTUALIZACIÓN: MOTOR DE EXPORTACIÓN E IMPORTACIÓN DE RESPALDOS MULTIDISPOSITIVO */
         function initDataSyncEngine() {
             var btnExport = document.getElementById('btn-export');
             var btnImport = document.getElementById('btn-import');
             var fileImport = document.getElementById('file-import');
 
-            // Lógica para exportar
             btnExport.addEventListener('click', function() {
                 localforage.getItem('validoc_projects').then(function(val) {
                     if (!val || val.length === 0) return alert("No hay procesos registrados para exportar.");
@@ -966,16 +1011,13 @@
                     document.body.appendChild(downloadAnchor);
                     downloadAnchor.click();
                     
-                    // Limpieza de memoria
                     downloadAnchor.remove();
                     URL.revokeObjectURL(url);
                 });
             });
 
-            // Disparar selección de archivo
             btnImport.addEventListener('click', function() { fileImport.click(); });
 
-            // Lógica para importar
             fileImport.addEventListener('change', function(e) {
                 var file = e.target.files[0]; if (!file) return;
                 var reader = new FileReader();
@@ -991,14 +1033,8 @@
                             var existingIds = projects.map(function(p) { return p.id; });
                             importedData.forEach(function(importedProj) {
                                 var idx = existingIds.indexOf(importedProj.id);
-                                if (idx === -1) {
-                                    projects.push(importedProj); // Si no existe en el equipo, lo añade
-                                } else {
-                                    // Si ya existe pero el importado es más reciente, actualiza
-                                    if (importedProj.timestamp > projects[idx].timestamp) {
-                                        projects[idx] = importedProj;
-                                    }
-                                }
+                                if (idx === -1) { projects.push(importedProj); } 
+                                else { if (importedProj.timestamp > projects[idx].timestamp) { projects[idx] = importedProj; } }
                             });
                         } else {
                             if (!confirm("⚠️ ATENCIÓN: Se eliminarán todos los procesos locales de este dispositivo para cargar los del archivo. ¿Continuar?")) return;
@@ -1008,15 +1044,71 @@
                         saveDataToStorage().then(function() {
                             renderProjectList();
                             alert("✅ ¡Sincronización de datos realizada con éxito!");
-                            fileImport.value = ""; // Resetea el input
+                            fileImport.value = ""; 
                         });
-
-                    } catch (err) {
-                        alert("Error de lectura: El archivo está corrupto o no es un respaldo válido de ValiDoc.");
-                    }
+                    } catch (err) { alert("Error de lectura: El archivo está corrupto o no es un respaldo válido de ValiDoc."); }
                 };
                 reader.readAsText(file);
             });
+        }
+
+        /* ACTUALIZACIÓN: LÓGICA DEL VISOR DE IMÁGENES (LIGHTBOX) */
+        var lbModal, lbImg, lbScale = 1, lbTranslateX = 0, lbTranslateY = 0, lbDragging = false, lbStartX, lbStartY;
+        
+        function initLightbox() {
+            lbModal = document.getElementById('lightbox-modal');
+            lbImg = document.getElementById('lightbox-img');
+            var lbOverlay = document.getElementById('lightbox-overlay');
+            var btnClose = document.getElementById('btn-lb-close');
+            var btnZoomIn = document.getElementById('btn-lb-zoom-in');
+            var btnZoomOut = document.getElementById('btn-lb-zoom-out');
+
+            btnClose.addEventListener('click', closeLightbox);
+            lbOverlay.addEventListener('click', closeLightbox);
+
+            btnZoomIn.addEventListener('click', function() { lbScale += 0.5; applyLightboxTransform(); });
+            btnZoomOut.addEventListener('click', function() { if (lbScale > 0.5) lbScale -= 0.5; applyLightboxTransform(); });
+
+            // Zoom con rueda del ratón en escritorio
+            lbImg.addEventListener('wheel', function(e) {
+                e.preventDefault();
+                if (e.deltaY < 0) { lbScale += 0.2; } else { if (lbScale > 0.5) lbScale -= 0.2; }
+                applyLightboxTransform();
+            });
+
+            // Paneo con el ratón (Arrastrar)
+            lbImg.addEventListener('mousedown', function(e) {
+                lbDragging = true; lbStartX = e.clientX - lbTranslateX; lbStartY = e.clientY - lbTranslateY;
+            });
+            window.addEventListener('mousemove', function(e) {
+                if (lbDragging) { lbTranslateX = e.clientX - lbStartX; lbTranslateY = e.clientY - lbStartY; applyLightboxTransform(); }
+            });
+            window.addEventListener('mouseup', function() { lbDragging = false; });
+
+            // Paneo con Touch (Móviles)
+            lbImg.addEventListener('touchstart', function(e) {
+                if (e.touches.length === 1) { lbDragging = true; lbStartX = e.touches[0].clientX - lbTranslateX; lbStartY = e.touches[0].clientY - lbTranslateY; }
+            });
+            window.addEventListener('touchmove', function(e) {
+                if (lbDragging && e.touches.length === 1) { e.preventDefault(); lbTranslateX = e.touches[0].clientX - lbStartX; lbTranslateY = e.touches[0].clientY - lbStartY; applyLightboxTransform(); }
+            }, { passive: false });
+            window.addEventListener('touchend', function() { lbDragging = false; });
+        }
+
+        function openLightbox(src) {
+            lbImg.src = src;
+            lbScale = 1; lbTranslateX = 0; lbTranslateY = 0;
+            applyLightboxTransform();
+            lbModal.classList.remove('hidden');
+        }
+
+        function closeLightbox() {
+            lbModal.classList.add('hidden');
+            setTimeout(function() { lbImg.src = ""; }, 200); // Limpia la imagen tras la animación
+        }
+
+        function applyLightboxTransform() {
+            lbImg.style.transform = 'translate(' + lbTranslateX + 'px, ' + lbTranslateY + 'px) scale(' + lbScale + ')';
         }
 
         initApp();
