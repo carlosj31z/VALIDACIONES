@@ -2,13 +2,22 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Mis Notas">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#2563eb">
     <title>Mis Notas</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         :root {
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-left: env(safe-area-inset-left, 0px);
+            --safe-right: env(safe-area-inset-right, 0px);
             --bg: #f0f4f8;
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
@@ -26,6 +35,21 @@
             --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
             --radius: 12px;
             --radius-sm: 8px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0f172a;
+                --primary: #3b82f6;
+                --primary-hover: #2563eb;
+                --danger: #ef4444;
+                --danger-hover: #dc2626;
+                --success: #10b981;
+                --text: #f1f5f9;
+                --text-secondary: #94a3b8;
+                --card: #1e293b;
+                --border: #334155;
+            }
         }
 
         body.sap-dark {
@@ -69,8 +93,10 @@
             height: 100dvh;
             overflow: hidden;
             transition: all 0.3s ease;
-            user-select: none;
-            -webkit-user-select: none;
+            padding-top: var(--safe-top);
+            padding-bottom: var(--safe-bottom);
+            padding-left: var(--safe-left);
+            padding-right: var(--safe-right);
         }
 
         .app-container {
@@ -103,30 +129,25 @@
             transition: opacity 0.3s;
         }
 
-        @media (min-width: 1025px) {
-            .view {
-                position: relative;
-            }
-        }
-
-        .hidden {
-            display: none !important;
-        }
+        @media (min-width: 1025px) { .view { position: relative; } }
+        .hidden { display: none !important; }
 
         header {
             background: var(--card);
-            padding: 14px 20px;
+            padding: 12px 16px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             flex-shrink: 0;
             z-index: 10;
         }
 
+        @media (min-width: 600px) { header { padding: 14px 20px; } }
+
         header h1 {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--text);
             flex: 1;
@@ -136,254 +157,138 @@
             white-space: nowrap;
         }
 
-        .header-actions {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            flex-shrink: 0;
-        }
+        .header-actions { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
 
         .btn {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 9px 14px;
+            padding: 8px 12px;
             border-radius: var(--radius-sm);
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             white-space: nowrap;
         }
-        .btn:hover {
-            background: var(--primary-hover);
-        }
-        .btn:active {
-            transform: scale(0.97);
-        }
+        .btn:active { transform: scale(0.97); }
 
-        .btn-secondary {
-            background: transparent;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-        }
-        .btn-secondary:hover {
-            background: var(--primary);
-            color: white;
-        }
+        .btn-secondary { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        .btn-secondary:active { background: var(--primary); color: white; }
 
-        .btn-danger {
-            background: var(--danger);
-        }
-        .btn-danger:hover {
-            background: var(--danger-hover);
-        }
-
-        .btn-success {
-            background: var(--success);
-        }
-        .btn-whatsapp {
-            background: var(--whatsapp);
-        }
-        .btn-whatsapp:hover {
-            background: var(--whatsapp-hover);
-        }
+        .btn-danger { background: var(--danger); }
+        .btn-success { background: var(--success); }
+        .btn-whatsapp { background: var(--whatsapp); }
 
         .btn-icon {
             background: transparent;
             border: 1px solid var(--border);
-            padding: 7px 10px;
+            padding: 6px 9px;
             border-radius: var(--radius-sm);
-            font-size: 1.1rem;
+            font-size: 1rem;
             cursor: pointer;
             transition: all 0.2s;
         }
-        .btn-icon:hover {
-            background: var(--bg);
-        }
+        .btn-icon:active { background: var(--bg); }
 
-        .btn-full {
-            width: 100%;
-            justify-content: center;
-        }
+        .btn-full { width: 100%; justify-content: center; }
 
         .btn-sm {
             background: none;
             border: none;
-            padding: 5px 7px;
+            padding: 4px 6px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             opacity: 0.6;
             transition: all 0.2s;
         }
-        .btn-sm:hover {
-            opacity: 1;
-            background: var(--bg);
-        }
+        .btn-sm:active { opacity: 1; background: var(--bg); }
 
         .dashboard-content {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 16px;
+            -webkit-overflow-scrolling: touch;
         }
 
-        @media (min-width: 1025px) {
-            .dashboard-content {
-                padding: 28px 32px;
-            }
-        }
+        @media (min-width: 1025px) { .dashboard-content { padding: 28px 32px; } }
 
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
         .section-title {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.6px;
             color: var(--text-secondary);
             font-weight: 700;
         }
 
-        .project-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-        }
-
-        @media (min-width: 600px) {
-            .project-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (min-width: 1025px) {
-            .project-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 14px;
-            }
-        }
-
-        @media (min-width: 1400px) {
-            .project-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
+        .project-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+        @media (min-width: 600px) { .project-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1025px) { .project-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; } }
 
         .project-card {
             background: var(--card);
             border-radius: var(--radius);
-            padding: 18px;
+            padding: 16px;
             box-shadow: var(--shadow);
             border: 1px solid var(--border);
             cursor: pointer;
             transition: all 0.2s;
         }
-        .project-card:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-1px);
-        }
+        .project-card:active { transform: scale(0.98); }
 
-        .project-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 10px;
-            gap: 8px;
-        }
-
-        .project-name {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text);
-            word-break: break-word;
-        }
-
-        .project-meta {
-            display: flex;
-            gap: 12px;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            flex-wrap: wrap;
-        }
-
-        .project-actions {
-            display: flex;
-            gap: 2px;
-            flex-shrink: 0;
-        }
+        .project-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 8px; }
+        .project-name { font-size: 0.95rem; font-weight: 700; color: var(--text); word-break: break-word; }
+        .project-meta { display: flex; gap: 10px; font-size: 0.7rem; color: var(--text-secondary); flex-wrap: wrap; }
+        .project-actions { display: flex; gap: 2px; flex-shrink: 0; }
 
         .pdf-controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 16px;
+            padding: 8px 12px;
             background: var(--card);
             border-bottom: 1px solid var(--border);
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
             flex-shrink: 0;
         }
+        @media (min-width: 600px) { .pdf-controls { padding: 10px 16px; } }
 
-        .page-nav {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
+        .page-nav { display: flex; align-items: center; gap: 6px; }
         .page-nav button {
             background: var(--bg);
             border: 1px solid var(--border);
-            padding: 7px 12px;
+            padding: 6px 10px;
             border-radius: var(--radius-sm);
             cursor: pointer;
             color: var(--text);
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             transition: all 0.2s;
-        }
-        .page-nav button:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .page-indicator {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            white-space: nowrap;
-        }
-
-        .zoom-controls {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .zoom-level {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            min-width: 45px;
+            min-width: 36px;
             text-align: center;
         }
+        .page-nav button:active { background: var(--primary); color: white; border-color: var(--primary); }
 
+        .page-indicator { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
+        .zoom-controls { display: flex; align-items: center; gap: 4px; }
+        .zoom-level { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); min-width: 40px; text-align: center; }
+
+        /* Editor main: scroll libre sin flexbox que interfiera */
         .editor-main {
             flex: 1;
             overflow: auto;
-            padding: 16px;
+            padding: 12px;
             text-align: center;
             background: var(--bg);
             -webkit-overflow-scrolling: touch;
         }
+        @media (min-width: 600px) { .editor-main { padding: 16px; } }
 
         #pdf-container {
             position: relative;
@@ -393,28 +298,23 @@
             display: inline-block;
             text-align: left;
             margin: 0 auto;
-            max-width: 100%;
             transform-origin: 0 0;
             transition: none;
         }
 
-        canvas {
-            display: block;
-            max-width: 100%;
-            height: auto !important;
-        }
+        canvas { display: block; border-radius: 8px; pointer-events: none; }
 
         .textLayer {
             position: absolute;
-            left: 0;
-            top: 0;
-            right: 0;
-            bottom: 0;
+            left: 0; top: 0; right: 0; bottom: 0;
             overflow: hidden;
-            opacity: 1;
+            opacity: 0.7;
             user-select: text;
             -webkit-user-select: text;
             z-index: 25;
+            border-radius: 8px;
+            line-height: 1;
+            pointer-events: auto;
         }
 
         .textLayer span {
@@ -424,40 +324,32 @@
             cursor: text;
             transform-origin: 0% 0%;
             line-height: 1;
+            font-size: 1px;
+            pointer-events: auto;
+            -webkit-user-select: text;
+            user-select: text;
         }
 
-        .textLayer ::selection,
-        .textLayer span::selection {
+        .textLayer span::selection,
+        .textLayer span *::selection {
             background: rgba(37, 99, 235, 0.35) !important;
-            color: #000 !important;
-            -webkit-text-fill-color: #000 !important;
-        }
-        .textLayer ::-moz-selection,
-        .textLayer span::-moz-selection {
-            background: rgba(37, 99, 235, 0.35) !important;
-            color: #000 !important;
-            -webkit-text-fill-color: #000 !important;
+            color: transparent !important;
+            -webkit-text-fill-color: transparent !important;
         }
 
         .annotation-layer-div {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 30;
             pointer-events: none;
+            border-radius: 8px;
         }
 
-        .annotation-wrapper {
-            position: absolute;
-            pointer-events: auto;
-            z-index: 50;
-        }
+        .annotation-wrapper { position: absolute; pointer-events: auto; z-index: 50; }
 
         .annotation-pin {
-            width: 30px;
-            height: 30px;
+            width: 26px; height: 26px;
             background: var(--primary);
             color: white;
             border-radius: 50% 50% 50% 0;
@@ -465,72 +357,64 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
             cursor: pointer;
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             font-weight: 700;
-            transition: all 0.2s;
+            transition: transform 0.2s;
         }
-        .annotation-pin:hover {
-            transform: rotate(-45deg) scale(1.08);
-        }
-        .annotation-pin span {
-            transform: rotate(45deg);
-            pointer-events: none;
-        }
+        .annotation-pin:active { transform: rotate(-45deg) scale(1.1); }
+        .annotation-pin span { transform: rotate(45deg); pointer-events: none; }
 
         .pin-replacement {
             background: var(--danger) !important;
-            box-shadow: 0 3px 10px rgba(220, 38, 38, 0.3) !important;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3) !important;
+            cursor: default !important;
         }
 
         @keyframes glowPulse {
             0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
-            50% { box-shadow: 0 0 0 12px rgba(37, 99, 235, 0); }
-            100% { box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3); }
+            50% { box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
+            100% { box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3); }
         }
-
         @keyframes glowReplacement {
             0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
-            50% { box-shadow: 0 0 0 12px rgba(220, 38, 38, 0); }
-            100% { box-shadow: 0 3px 10px rgba(220, 38, 38, 0.3); }
+            50% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3); }
         }
-
-        .glow-effect {
-            animation: glowPulse 1s ease-out;
-        }
-        .pin-replacement.glow-effect {
-            animation: glowReplacement 1s ease-out;
-        }
+        .glow-effect { animation: glowPulse 0.8s ease-out; }
+        .pin-replacement.glow-effect { animation: glowReplacement 0.8s ease-out; }
 
         .strike-overlay {
             position: absolute;
             background: var(--danger);
-            height: 3px !important;
+            height: 1.5px !important;
             transform: translateY(-50%);
             pointer-events: none;
             z-index: 55;
-            border-radius: 2px;
-            opacity: 0.85;
+            border-radius: 1px;
+            opacity: 0.8;
         }
+        @media (min-width: 600px) { .strike-overlay { height: 2px !important; } }
 
         .annotation-bubble {
             position: absolute;
             top: -5px;
-            left: 38px;
+            left: 34px;
             background: var(--card);
             border: 1px solid var(--border);
-            padding: 14px;
+            padding: 12px;
             border-radius: var(--radius);
             box-shadow: var(--shadow-lg);
-            width: 270px;
-            max-width: calc(100vw - 70px);
+            width: 250px;
+            max-width: calc(100vw - 50px);
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             z-index: 60;
-            animation: slideIn 0.2s ease-out;
+            animation: slideIn 0.15s ease-out;
         }
+        @media (min-width: 600px) { .annotation-bubble { width: 270px; padding: 14px; left: 36px; } }
 
         @keyframes slideIn {
             from { opacity: 0; transform: translateX(-8px); }
@@ -539,85 +423,59 @@
 
         .annotation-bubble textarea {
             width: 100%;
-            height: 65px;
+            height: 55px;
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
             resize: vertical;
             background: var(--bg);
             font-size: 0.85rem;
             color: var(--text);
-            padding: 8px;
+            padding: 6px 8px;
             outline: none;
             font-family: inherit;
         }
-        .annotation-bubble textarea:focus {
-            border-color: var(--primary);
-        }
-        .bubble-replacement textarea:focus {
-            border-color: var(--danger);
-        }
+        .annotation-bubble textarea:focus { border-color: var(--primary); }
+        .bubble-replacement textarea:focus { border-color: var(--danger); }
 
         .annotation-bubble img,
         .annotation-bubble video {
             width: 100%;
-            max-height: 180px;
+            max-height: 160px;
             object-fit: contain;
             border-radius: var(--radius-sm);
             border: 1px solid var(--border);
         }
-        .annotation-bubble video {
-            background: black;
-        }
+        .annotation-bubble video { background: black; }
 
-        .bubble-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
-
-        .bubble-type-badge {
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.65rem;
-            font-weight: 700;
-        }
+        .bubble-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.65rem; color: var(--text-secondary); font-weight: 600; }
+        .bubble-type-badge { padding: 2px 6px; border-radius: 10px; font-size: 0.6rem; font-weight: 700; }
 
         .badge-note { background: #dbeafe; color: #1e40af; }
         .badge-photo { background: #dcfce7; color: #166534; }
         .badge-video { background: #fef3c7; color: #92400e; }
         .badge-audio { background: #f3e8ff; color: #6b21a8; }
         .badge-timer { background: #fce7f3; color: #9d174d; }
-        .badge-replacement { background: #fee2e2; color: #991b1b; }
+        .badge-reemplazo { background: #fee2e2; color: #991b1b; }
 
         .bottom-dock {
             position: fixed;
-            bottom: 14px;
+            bottom: calc(12px + var(--safe-bottom));
             left: 50%;
             transform: translateX(-50%);
             background: var(--card);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            padding: 7px 12px;
-            border-radius: 18px;
-            box-shadow: var(--shadow-lg);
+            padding: 5px 8px;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
             display: flex;
-            gap: 3px;
+            gap: 1px;
             border: 1px solid var(--border);
             z-index: 100;
-            max-width: calc(100vw - 24px);
+            max-width: calc(100vw - 16px);
             overflow-x: auto;
         }
-
-        @media (min-width: 1025px) {
-            .bottom-dock {
-                bottom: 24px;
-                padding: 8px 16px;
-                gap: 6px;
-            }
-        }
+        @media (min-width: 1025px) { .bottom-dock { bottom: 24px; padding: 8px 16px; gap: 6px; } }
 
         .dock-btn {
             background: none;
@@ -625,302 +483,98 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 3px;
+            gap: 2px;
             color: var(--text-secondary);
-            font-size: 0.6rem;
+            font-size: 0.5rem;
             font-weight: 600;
             cursor: pointer;
-            padding: 5px 7px;
-            border-radius: 14px;
+            padding: 3px 5px;
+            border-radius: 12px;
             transition: all 0.2s;
-            min-width: 48px;
+            min-width: 40px;
             flex-shrink: 0;
         }
-        .dock-btn:hover {
-            background: var(--bg);
-            color: var(--text);
-        }
+        .dock-btn:active { background: var(--bg); color: var(--text); }
 
         .dock-icon {
-            width: 38px;
-            height: 38px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: var(--bg);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             border: 2px solid transparent;
         }
 
-        .dock-btn-primary .dock-icon {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            width: 42px;
-            height: 42px;
-        }
-        .dock-btn-primary {
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        .dock-btn-danger .dock-icon {
-            background: var(--danger);
-            color: white;
-            border-color: var(--danger);
-            width: 42px;
-            height: 42px;
-        }
-        .dock-btn-danger {
-            color: var(--danger);
-            font-weight: 700;
-        }
-
-        .dock-btn-recording .dock-icon {
-            background: var(--danger) !important;
-            animation: pulse 1.5s infinite;
-        }
+        .dock-btn-primary .dock-icon { background: var(--primary); color: white; border-color: var(--primary); width: 36px; height: 36px; }
+        .dock-btn-primary { color: var(--primary); font-weight: 700; }
+        .dock-btn-danger .dock-icon { background: var(--danger); color: white; border-color: var(--danger); width: 36px; height: 36px; }
+        .dock-btn-danger { color: var(--danger); font-weight: 700; }
+        .dock-btn-recording .dock-icon { background: var(--danger) !important; animation: pulse 1.5s infinite; }
 
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5); }
-            70% { box-shadow: 0 0 0 15px rgba(220, 38, 38, 0); }
+            70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
             100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
         }
 
-        .modal-overlay {
+        @media (min-width: 600px) {
+            .dock-icon { width: 36px; height: 36px; font-size: 1rem; }
+            .dock-btn-primary .dock-icon, .dock-btn-danger .dock-icon { width: 40px; height: 40px; }
+            .dock-btn { font-size: 0.55rem; padding: 4px 6px; min-width: 46px; }
+        }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.55); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .timer-modal { background: var(--card); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow-lg); text-align: center; width: min(300px, 90vw); }
+        .timer-display { font-size: 2.2rem; font-family: 'Courier New', monospace; font-weight: 700; color: var(--text); margin: 12px 0; background: var(--bg); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+        .timer-buttons { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
+        .time-badge { font-size: 1rem; font-family: monospace; font-weight: 700; color: var(--primary); text-align: center; padding: 8px; background: var(--bg); border-radius: var(--radius-sm); margin-bottom: 5px; border: 1px solid var(--border); }
+        .whatsapp-modal { background: var(--card); padding: 18px; border-radius: var(--radius); box-shadow: var(--shadow-lg); width: min(340px, 90vw); }
+        .whatsapp-modal h3 { margin-bottom: 8px; color: var(--text); font-size: 0.95rem; }
+        .whatsapp-modal .input-group { margin-bottom: 10px; }
+        .whatsapp-modal label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
+        .whatsapp-modal input { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9rem; background: var(--bg); color: var(--text); outline: none; }
+        .whatsapp-modal .helper-text { font-size: 0.65rem; color: var(--text-secondary); margin-top: 2px; }
+        .progress-bar { width: 100%; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin: 8px 0; }
+        .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width 0.3s; width: 0%; }
+        .fullscreen-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; touch-action: none; }
+        .fullscreen-overlay.show { opacity: 1; }
+        .fullscreen-overlay img { max-width: 95vw; max-height: 95vh; border-radius: 4px; will-change: transform; }
+        .fullscreen-close { position: absolute; top: calc(16px + var(--safe-top)); right: calc(16px + var(--safe-right)); background: rgba(255,255,255,0.2); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; z-index: 10000; }
+        .video-recorder { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 9998; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .video-recorder video { width: 100%; max-height: 65vh; background: black; }
+        .recorder-bar { display: flex; gap: 16px; margin-top: 16px; align-items: center; }
+        .rec-circle { width: 46px; height: 46px; border-radius: 50%; border: 3px solid white; background: rgba(255,255,255,0.2); color: white; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+        .rec-circle.active { background: var(--danger); border-color: var(--danger); animation: pulse 1.5s infinite; }
+        .rec-timer { color: white; font-size: 0.95rem; font-family: monospace; font-weight: 600; }
+        .empty-state { text-align: center; padding: 30px 16px; color: var(--text-secondary); }
+        .empty-state .empty-icon { font-size: 2.2rem; margin-bottom: 8px; opacity: 0.5; }
+        .empty-state p { font-size: 0.9rem; }
+        #file-camera, #file-pdf, #file-import { display: none; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        .toast {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.55);
-            z-index: 200;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-        }
-
-        .timer-modal {
-            background: var(--card);
-            padding: 24px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-lg);
-            text-align: center;
-            width: min(320px, 90vw);
-        }
-
-        .timer-display {
-            font-size: 2.5rem;
-            font-family: 'Courier New', monospace;
-            font-weight: 700;
-            color: var(--text);
-            margin: 14px 0;
-            background: var(--bg);
-            padding: 12px;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border);
-        }
-
-        .timer-buttons {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .time-badge {
-            font-size: 1.1rem;
-            font-family: monospace;
-            font-weight: 700;
-            color: var(--primary);
-            text-align: center;
-            padding: 10px;
-            background: var(--bg);
-            border-radius: var(--radius-sm);
-            margin-bottom: 6px;
-            border: 1px solid var(--border);
-        }
-
-        .whatsapp-modal {
-            background: var(--card);
-            padding: 22px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-lg);
-            width: min(380px, 90vw);
-        }
-
-        .whatsapp-modal h3 {
-            margin-bottom: 10px;
-            color: var(--text);
-            font-size: 1rem;
-        }
-
-        .whatsapp-modal .input-group {
-            margin-bottom: 12px;
-        }
-        .whatsapp-modal label {
-            display: block;
-            font-size: 0.8rem;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
             font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 5px;
-        }
-        .whatsapp-modal input {
-            width: 100%;
-            padding: 9px 12px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            font-size: 0.9rem;
-            background: var(--bg);
-            color: var(--text);
-            outline: none;
-        }
-        .whatsapp-modal input:focus {
-            border-color: var(--whatsapp);
-        }
-        .whatsapp-modal .helper-text {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            margin-top: 3px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: var(--border);
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            background: var(--primary);
-            border-radius: 4px;
-            transition: width 0.3s;
-            width: 0%;
-        }
-
-        .fullscreen-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            font-size: 0.85rem;
             z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s;
-            touch-action: none;
+            animation: toastIn 0.3s ease, toastOut 0.3s ease 2.5s forwards;
+            box-shadow: var(--shadow-lg);
+            white-space: nowrap;
         }
-        .fullscreen-overlay.show {
-            opacity: 1;
-        }
-        .fullscreen-overlay img {
-            max-width: 95vw;
-            max-height: 95vh;
-            border-radius: 4px;
-            will-change: transform;
-        }
-        .fullscreen-close {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            cursor: pointer;
-            z-index: 10000;
-        }
-
-        .video-recorder {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: black;
-            z-index: 9998;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .video-recorder video {
-            width: 100%;
-            max-height: 65vh;
-            background: black;
-        }
-        .recorder-bar {
-            display: flex;
-            gap: 18px;
-            margin-top: 18px;
-            align-items: center;
-        }
-        .rec-circle {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 3px solid white;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .rec-circle.active {
-            background: var(--danger);
-            border-color: var(--danger);
-            animation: pulse 1.5s infinite;
-        }
-        .rec-timer {
-            color: white;
-            font-size: 1rem;
-            font-family: monospace;
-            font-weight: 600;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 16px;
-            color: var(--text-secondary);
-        }
-        .empty-state .empty-icon {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            opacity: 0.5;
-        }
-
-        #file-camera,
-        #file-pdf,
-        #file-import {
-            display: none;
-        }
-
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 3px;
-        }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+        @keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
     </style>
 </head>
 <body>
@@ -929,21 +583,16 @@
             <header>
                 <h1>📋 Mis Notas</h1>
                 <div class="header-actions">
-                    <button class="btn-icon" id="btn-export" title="Exportar todo">📤</button>
+                    <button class="btn-icon" id="btn-export" title="Exportar">📤</button>
                     <button class="btn-icon" id="btn-import" title="Importar">📥</button>
                     <button class="btn-icon" id="btn-theme-dash" title="Tema">🎨</button>
                     <button class="btn" id="btn-new-project">+ Nuevo</button>
                 </div>
             </header>
             <div class="dashboard-content">
-                <div class="section-header">
-                    <h2 class="section-title">📁 Mis Proyectos</h2>
-                </div>
+                <div class="section-header"><h2 class="section-title">📁 Mis Proyectos</h2></div>
                 <div class="project-grid" id="project-list-container">
-                    <div class="empty-state">
-                        <div class="empty-icon">📭</div>
-                        <p>No hay proyectos aún</p>
-                    </div>
+                    <div class="empty-state"><div class="empty-icon">📭</div><p>No hay proyectos aún</p></div>
                 </div>
             </div>
         </div>
@@ -957,11 +606,10 @@
                     <button class="btn btn-success" id="btn-save-exit">💾 Guardar</button>
                 </div>
             </header>
-
             <div class="pdf-controls">
                 <div class="page-nav">
                     <button id="pdf-prev">◀</button>
-                    <span class="page-indicator">Pág <strong id="pdf-current-page">0</strong> / <strong id="pdf-total-pages">0</strong></span>
+                    <span class="page-indicator">Pág <strong id="pdf-current-page">0</strong>/<strong id="pdf-total-pages">0</strong></span>
                     <button id="pdf-next">▶</button>
                 </div>
                 <div class="zoom-controls">
@@ -970,13 +618,10 @@
                     <button class="btn-icon" id="btn-zoom-in">➕</button>
                 </div>
             </div>
-
             <div class="editor-main" id="editor-main-container">
                 <div id="pdf-upload-loader" style="margin-top:18%;">
-                    <div class="empty-state">
-                        <div class="empty-icon">📄</div>
-                        <p style="font-weight:600;">Carga un documento PDF</p>
-                        <label for="file-pdf" class="btn" style="margin-top:14px;">Seleccionar archivo</label>
+                    <div class="empty-state"><div class="empty-icon">📄</div><p style="font-weight:600;">Carga un PDF</p>
+                        <label for="file-pdf" class="btn" style="margin-top:12px;">Seleccionar</label>
                         <input type="file" id="file-pdf" accept="application/pdf">
                     </div>
                 </div>
@@ -986,28 +631,15 @@
                     <div class="annotation-layer-div" id="annotation-layer"></div>
                 </div>
             </div>
-
             <input type="file" accept="image/*,video/*" capture="environment" id="file-camera">
-
             <nav class="bottom-dock">
-                <button class="dock-btn" id="btn-dock-camera">
-                    <div class="dock-icon">📸</div><span>Capturar</span>
-                </button>
-                <button class="dock-btn dock-btn-primary" id="btn-dock-note">
-                    <div class="dock-icon">📝</div><span>Nota</span>
-                </button>
-                <button class="dock-btn dock-btn-danger" id="btn-dock-replacement">
-                    <div class="dock-icon">✂️</div><span>Reemplazar</span>
-                </button>
-                <button class="dock-btn" id="btn-dock-audio">
-                    <div class="dock-icon" id="audio-icon">🎤</div><span>Audio</span>
-                </button>
-                <button class="dock-btn" id="btn-dock-timer">
-                    <div class="dock-icon">⏱️</div><span>Tiempo</span>
-                </button>
+                <button class="dock-btn" id="btn-dock-camera"><div class="dock-icon">📸</div><span>Foto</span></button>
+                <button class="dock-btn dock-btn-primary" id="btn-dock-note"><div class="dock-icon">📝</div><span>Nota</span></button>
+                <button class="dock-btn dock-btn-danger" id="btn-dock-replacement"><div class="dock-icon">✏️</div><span>Reemp.</span></button>
+                <button class="dock-btn" id="btn-dock-audio"><div class="dock-icon" id="audio-icon">🎤</div><span>Audio</span></button>
+                <button class="dock-btn" id="btn-dock-timer"><div class="dock-icon">⏱️</div><span>Tiempo</span></button>
             </nav>
         </div>
-
         <input type="file" id="file-import" accept=".zip,application/zip">
     </div>
 
@@ -1017,9 +649,9 @@
             <div class="timer-display" id="timer-display">00:00.00</div>
             <div class="timer-buttons">
                 <button class="btn" id="btn-timer-start">▶ Iniciar</button>
-                <button class="btn btn-danger hidden" id="btn-timer-stop">⏹ Detener</button>
+                <button class="btn btn-danger hidden" id="btn-timer-stop">⏹ Parar</button>
                 <button class="btn btn-success" id="btn-timer-save" disabled>💾 Guardar</button>
-                <button class="btn btn-secondary" id="btn-timer-cancel">✖ Cancelar</button>
+                <button class="btn btn-secondary" id="btn-timer-cancel">✖</button>
             </div>
         </div>
     </div>
@@ -1027,41 +659,43 @@
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-        var projects = [];
-        var currentProject = null;
-        var pdfDoc = null;
-        var currentPageNum = 1;
-        var pageIsRendering = false;
-        var pdfScale = 1.0;
-        var blobCache = {};
+        var projects = [], currentProject = null, pdfDoc = null, currentPageNum = 1, pageIsRendering = false, pdfScale = 1.0, blobCache = {};
+        var typeNames = { 'text': 'Nota', 'photo': 'Foto', 'video': 'Video', 'audio': 'Audio', 'timer': 'Tiempo', 'replacement': 'Reemplazo' };
 
-        // Variables para el desplazamiento táctil del PDF
-        var pdfPanX = 0, pdfPanY = 0;
-        var isPanning = false;
-        var lastPanPoint = { x: 0, y: 0 };
+        // Variables para zoom con pellizco
+        var initialPinchDistance = 0;
+        var pinchStartScale = 1.0;
+        var lastTapTime = 0;
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').catch(function() {});
+            });
+        }
+
+        function showToast(message) {
+            var toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(function() { if (toast.parentNode) toast.remove(); }, 3000);
+        }
 
         function initTheme() {
-            var themes = ['light', 'dark', 'pink'];
-            var icons = ['🌙', '🌸', '☀️'];
-            var current = localStorage.getItem('sap-theme') || 'light';
+            var themes = ['light', 'dark', 'pink'], icons = ['🌙', '🌸', '☀️'];
+            var saved = localStorage.getItem('sap-theme');
+            var current = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
             if (!themes.includes(current)) current = 'light';
-
             function apply(t) {
                 document.body.classList.remove('sap-dark', 'sap-pink');
                 if (t === 'dark') document.body.classList.add('sap-dark');
                 if (t === 'pink') document.body.classList.add('sap-pink');
                 var i = themes.indexOf(t);
-                var dashBtn = document.getElementById('btn-theme-dash');
-                var editBtn = document.getElementById('btn-theme-edit');
-                if (dashBtn) dashBtn.textContent = icons[i];
-                if (editBtn) editBtn.textContent = icons[i];
+                document.getElementById('btn-theme-dash').textContent = icons[i];
+                document.getElementById('btn-theme-edit').textContent = icons[i];
             }
             apply(current);
-            var toggle = function() {
-                current = themes[(themes.indexOf(current) + 1) % themes.length];
-                localStorage.setItem('sap-theme', current);
-                apply(current);
-            };
+            var toggle = function() { current = themes[(themes.indexOf(current) + 1) % themes.length]; localStorage.setItem('sap-theme', current); apply(current); };
             document.getElementById('btn-theme-dash').addEventListener('click', toggle);
             document.getElementById('btn-theme-edit').addEventListener('click', toggle);
         }
@@ -1069,309 +703,261 @@
         async function saveBlob(key, blob) { blobCache[key] = blob; return await localforage.setItem('blob_' + key, blob); }
         async function getBlob(key) { if (blobCache[key]) return blobCache[key]; var b = await localforage.getItem('blob_' + key); if (b) blobCache[key] = b; return b; }
         async function deleteBlob(key) { delete blobCache[key]; return await localforage.removeItem('blob_' + key); }
-
         function saveData() { if (currentProject) currentProject.timestamp = Date.now(); return localforage.setItem('misnotas_projects', projects); }
 
         function showView(v) {
-            if (v === 'dashboard') {
-                document.getElementById('view-dashboard').classList.remove('hidden');
-                document.getElementById('view-editor').classList.add('hidden');
-                renderProjects();
-            } else {
-                document.getElementById('view-dashboard').classList.add('hidden');
-                document.getElementById('view-editor').classList.remove('hidden');
-                updateEditorPadding();
-            }
+            if (v === 'dashboard') { document.getElementById('view-dashboard').classList.remove('hidden'); document.getElementById('view-editor').classList.add('hidden'); renderProjects(); }
+            else { document.getElementById('view-dashboard').classList.add('hidden'); document.getElementById('view-editor').classList.remove('hidden'); updateEditorPadding(); }
         }
 
         function updateEditorPadding() {
-            var dock = document.querySelector('.bottom-dock');
-            var editor = document.getElementById('editor-main-container');
-            if (dock && editor && !document.getElementById('view-editor').classList.contains('hidden')) {
-                editor.style.paddingBottom = (dock.offsetHeight + 28) + 'px';
-            }
+            var dock = document.querySelector('.bottom-dock'), editor = document.getElementById('editor-main-container');
+            if (dock && editor && !document.getElementById('view-editor').classList.contains('hidden')) editor.style.paddingBottom = (dock.offsetHeight + 24) + 'px';
         }
         window.addEventListener('resize', updateEditorPadding);
 
         function renderProjects() {
-            var container = document.getElementById('project-list-container');
-            if (!container) return;
-            container.innerHTML = '';
+            var c = document.getElementById('project-list-container'); if (!c) return; c.innerHTML = '';
             projects.sort(function(a, b) { return b.timestamp - a.timestamp; });
-            if (projects.length === 0) {
-                container.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>No hay proyectos aún</p></div>';
-                return;
-            }
+            if (projects.length === 0) { c.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>No hay proyectos aún</p></div>'; return; }
             projects.forEach(function(p) {
-                var total = 0;
-                for (var pg in p.annotations) total += p.annotations[pg].length;
-                var card = document.createElement('div');
-                card.className = 'project-card';
-                card.innerHTML = '<div class="project-card-header">' +
-                    '<span class="project-name">📄 ' + (p.name || 'Sin nombre') + '</span>' +
-                    '<div class="project-actions">' +
-                    '<button class="btn-sm" data-edit="' + p.id + '">✏️</button>' +
-                    '<button class="btn-sm" data-delete="' + p.id + '" style="color:var(--danger)">🗑️</button>' +
-                    '</div></div>' +
-                    '<div class="project-meta"><span>🕒 ' + new Date(p.timestamp).toLocaleDateString() + '</span><span>📌 ' + total +
-                    ' notas</span><span>' + (p.pdfData ? '📕 PDF' : '📄 Sin PDF') + '</span></div>';
+                var t = 0; for (var pg in p.annotations) t += p.annotations[pg].length;
+                var card = document.createElement('div'); card.className = 'project-card';
+                card.innerHTML = '<div class="project-card-header"><span class="project-name">📄 ' + (p.name || 'Sin nombre') + '</span><div class="project-actions"><button class="btn-sm" data-edit="' + p.id + '">✏️</button><button class="btn-sm" data-delete="' + p.id + '" style="color:var(--danger)">🗑️</button></div></div><div class="project-meta"><span>🕒 ' + new Date(p.timestamp).toLocaleDateString() + '</span><span>📌 ' + t + ' notas</span><span>' + (p.pdfData ? '📕 PDF' : '📄 Sin PDF') + '</span></div>';
                 card.addEventListener('click', function(e) { if (!e.target.closest('button')) openProject(p.id); });
-                card.querySelector('[data-edit]').addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    var n = prompt('Renombrar:', p.name);
-                    if (n && n.trim()) { p.name = n.trim(); saveData().then(renderProjects); }
-                });
-                card.querySelector('[data-delete]').addEventListener('click', async function(e) {
-                    e.stopPropagation();
-                    if (confirm('¿Eliminar?')) {
-                        for (var pg in p.annotations)
-                            for (var i = 0; i < p.annotations[pg].length; i++)
-                                if (p.annotations[pg][i].mediaKey) await deleteBlob(p.annotations[pg][i].mediaKey);
-                        projects = projects.filter(function(x) { return x.id !== p.id; });
-                        saveData().then(renderProjects);
-                    }
-                });
-                container.appendChild(card);
+                card.querySelector('[data-edit]').addEventListener('click', function(e) { e.stopPropagation(); var n = prompt('Renombrar:', p.name); if (n && n.trim()) { p.name = n.trim(); saveData().then(renderProjects); } });
+                card.querySelector('[data-delete]').addEventListener('click', async function(e) { e.stopPropagation(); if (confirm('¿Eliminar?')) { for (var pg in p.annotations) for (var i = 0; i < p.annotations[pg].length; i++) if (p.annotations[pg][i].mediaKey) await deleteBlob(p.annotations[pg][i].mediaKey); projects = projects.filter(function(x) { return x.id !== p.id; }); saveData().then(renderProjects); } });
+                c.appendChild(card);
             });
         }
 
-        document.getElementById('btn-new-project').addEventListener('click', function() {
-            var n = prompt('Nombre:', 'Proyecto ' + (projects.length + 1));
-            if (!n) return;
-            var p = { id: 'proj_' + Date.now(), name: n, timestamp: Date.now(), pdfData: null, annotations: {} };
-            projects.push(p);
-            saveData().then(function() { openProject(p.id); });
-        });
+        document.getElementById('btn-new-project').addEventListener('click', function() { var n = prompt('Nombre:', 'Proyecto ' + (projects.length + 1)); if (!n) return; var p = { id: 'proj_' + Date.now(), name: n, timestamp: Date.now(), pdfData: null, annotations: {} }; projects.push(p); saveData().then(function() { openProject(p.id); }); });
 
         function openProject(id) {
-            currentProject = projects.find(function(p) { return p.id === id; });
-            if (!currentProject) return;
+            currentProject = projects.find(function(p) { return p.id === id; }); if (!currentProject) return;
             document.getElementById('editor-project-title').textContent = '📄 ' + currentProject.name;
-            pdfDoc = null;
-            currentPageNum = 1;
+            pdfDoc = null; currentPageNum = 1;
             pdfScale = 1.0;
-            pdfPanX = 0; pdfPanY = 0;
-            var pdfContainer = document.getElementById('pdf-container');
-            if (pdfContainer) pdfContainer.style.transform = '';
             document.getElementById('pdf-container').style.display = 'none';
             document.getElementById('annotation-layer').innerHTML = '';
             document.getElementById('pdf-text-layer').innerHTML = '';
             document.getElementById('zoom-level').textContent = '100%';
-            if (currentProject.pdfData) {
-                document.getElementById('pdf-upload-loader').style.display = 'none';
-                document.getElementById('pdf-container').style.display = 'inline-block';
-                loadPDF(currentProject.pdfData);
-            } else {
-                document.getElementById('pdf-upload-loader').style.display = 'block';
-            }
+            if (currentProject.pdfData) { document.getElementById('pdf-upload-loader').style.display = 'none'; document.getElementById('pdf-container').style.display = 'inline-block'; loadPDF(currentProject.pdfData); }
+            else { document.getElementById('pdf-upload-loader').style.display = 'block'; }
             showView('editor');
         }
 
-        document.getElementById('file-pdf').addEventListener('change', function(e) {
-            var f = e.target.files[0];
-            if (!f) return;
-            var r = new FileReader();
-            r.onload = function() {
-                if (!currentProject) return;
-                currentProject.pdfData = r.result;
-                saveData().then(function() {
-                    document.getElementById('pdf-upload-loader').style.display = 'none';
-                    document.getElementById('pdf-container').style.display = 'inline-block';
-                    loadPDF(currentProject.pdfData);
-                });
-            };
-            r.readAsDataURL(f);
-        });
+        document.getElementById('file-pdf').addEventListener('change', function(e) { var f = e.target.files[0]; if (!f || !currentProject) return; var r = new FileReader(); r.onload = function() { currentProject.pdfData = r.result; saveData().then(function() { document.getElementById('pdf-upload-loader').style.display = 'none'; document.getElementById('pdf-container').style.display = 'inline-block'; loadPDF(currentProject.pdfData); }); }; r.readAsDataURL(f); });
 
         function loadPDF(b64) {
-            var parts = b64.split(',');
-            if (parts.length < 2) return;
-            var d = atob(parts[1]);
-            var bytes = new Uint8Array(d.length);
+            var parts = b64.split(','); if (parts.length < 2) return;
+            var d = atob(parts[1]), bytes = new Uint8Array(d.length);
             for (var i = 0; i < d.length; i++) bytes[i] = d.charCodeAt(i);
-            pdfjsLib.getDocument({ data: bytes }).promise.then(function(pdf) {
-                pdfDoc = pdf;
-                document.getElementById('pdf-total-pages').textContent = pdf.numPages;
-                return pdf.getPage(1);
-            }).then(function(page) {
-                var w = document.getElementById('editor-main-container').clientWidth - 32;
-                pdfScale = Math.min(w / page.getViewport({ scale: 1 }).width, 2.5);
-                updateZoomLevel();
-                renderPage(1);
-            }).catch(function(err) {
-                console.error('Error al cargar PDF:', err);
-            });
+            pdfjsLib.getDocument({ data: bytes }).promise.then(function(pdf) { pdfDoc = pdf; document.getElementById('pdf-total-pages').textContent = pdf.numPages; return pdf.getPage(1); })
+                .then(function(page) {
+                    var editorMain = document.getElementById('editor-main-container');
+                    var containerWidth = editorMain.clientWidth - 24;
+                    var containerHeight = editorMain.clientHeight - 24;
+                    var vp = page.getViewport({ scale: 1 });
+                    var scaleX = containerWidth / vp.width;
+                    var scaleY = containerHeight / vp.height;
+                    // Ajustar para que quepa toda la página
+                    pdfScale = Math.min(scaleX, scaleY, 1.5);
+                    updateZoomDisplay();
+                    renderPage(1);
+                })
+                .catch(function(err) { console.error('Error:', err); });
         }
 
-        function renderPage(num) {
+        function renderPage(num, keepScroll) {
             if (!pdfDoc) return;
+            var editor = document.getElementById('editor-main-container');
+            var prevScrollLeft = editor.scrollLeft;
+            var prevScrollTop = editor.scrollTop;
+            
             pageIsRendering = true;
-            document.getElementById('pdf-text-layer').innerHTML = '';
+            var textLayerDiv = document.getElementById('pdf-text-layer');
+            textLayerDiv.innerHTML = '';
+            
             pdfDoc.getPage(num).then(function(page) {
                 var vp = page.getViewport({ scale: pdfScale });
-                var dpr = window.devicePixelRatio || 1;
-                var canvas = document.getElementById('pdf-canvas');
-                var ctx = canvas.getContext('2d');
-                canvas.width = Math.floor(vp.width * dpr);
-                canvas.height = Math.floor(vp.height * dpr);
-                canvas.style.width = Math.floor(vp.width) + 'px';
-                canvas.style.height = Math.floor(vp.height) + 'px';
-                document.getElementById('pdf-container').style.width = Math.floor(vp.width) + 'px';
-                document.getElementById('pdf-container').style.height = Math.floor(vp.height) + 'px';
+                var dpr = Math.min(window.devicePixelRatio || 1, 2);
+                var canvas = document.getElementById('pdf-canvas'), ctx = canvas.getContext('2d');
+                canvas.width = Math.floor(vp.width * dpr); canvas.height = Math.floor(vp.height * dpr);
+                canvas.style.width = Math.floor(vp.width) + 'px'; canvas.style.height = Math.floor(vp.height) + 'px';
+                var container = document.getElementById('pdf-container');
+                container.style.width = Math.floor(vp.width) + 'px';
+                container.style.height = Math.floor(vp.height) + 'px';
+                container.style.transform = '';
                 var t = dpr !== 1 ? [dpr, 0, 0, dpr, 0, 0] : null;
+                
                 page.render({ canvasContext: ctx, transform: t, viewport: vp }).promise
                     .then(function() { return page.getTextContent(); })
                     .then(function(tc) {
-                        pdfjsLib.renderTextLayer({ textContent: tc, container: document.getElementById('pdf-text-layer'),
-                            viewport: vp, textDivs: [] });
+                        pdfjsLib.renderTextLayer({
+                            textContent: tc,
+                            container: textLayerDiv,
+                            viewport: vp,
+                            textDivs: [],
+                            enhanceTextSelection: true
+                        });
+                        setTimeout(function() {
+                            var spans = textLayerDiv.querySelectorAll('span');
+                            for (var i = 0; i < spans.length; i++) {
+                                var span = spans[i];
+                                span.style.pointerEvents = 'auto';
+                                span.style.cursor = 'text';
+                                var cw = parseFloat(span.style.width) || 0;
+                                var ch = parseFloat(span.style.height) || 0;
+                                if (cw > 0) span.style.width = (cw * 1.02) + 'px';
+                                if (ch > 0) span.style.height = (ch * 1.1) + 'px';
+                            }
+                        }, 50);
+                        
                         pageIsRendering = false;
                         document.getElementById('pdf-current-page').textContent = num;
                         renderAnnotations();
+                        
+                        // Restaurar scroll si se solicita
+                        if (keepScroll) {
+                            editor.scrollLeft = prevScrollLeft;
+                            editor.scrollTop = prevScrollTop;
+                        }
                     });
-            }).catch(function(err) {
-                console.error('Error al renderizar página:', err);
-                pageIsRendering = false;
-            });
+            }).catch(function(err) { console.error('Error:', err); pageIsRendering = false; });
         }
 
-        function updateZoomLevel() { document.getElementById('zoom-level').textContent = Math.round(pdfScale * 100) + '%'; }
+        function updateZoomDisplay() {
+            document.getElementById('zoom-level').textContent = Math.round(pdfScale * 100) + '%';
+        }
 
+        // ZOOM CON BOTONES (re-renderiza nítido)
         document.getElementById('btn-zoom-in').addEventListener('click', function() {
             if (pdfDoc && !pageIsRendering) {
                 pdfScale = Math.min(4, pdfScale + 0.25);
-                updateZoomLevel();
-                renderPage(currentPageNum);
+                updateZoomDisplay();
+                renderPage(currentPageNum, true);
             }
         });
         document.getElementById('btn-zoom-out').addEventListener('click', function() {
             if (pdfDoc && !pageIsRendering && pdfScale > 0.5) {
                 pdfScale = Math.max(0.5, pdfScale - 0.25);
-                updateZoomLevel();
-                renderPage(currentPageNum);
+                updateZoomDisplay();
+                renderPage(currentPageNum, true);
             }
         });
-        document.getElementById('pdf-prev').addEventListener('click', function() {
-            if (currentPageNum > 1 && !pageIsRendering) { currentPageNum--; renderPage(currentPageNum); }
-        });
-        document.getElementById('pdf-next').addEventListener('click', function() {
-            if (pdfDoc && currentPageNum < pdfDoc.numPages && !pageIsRendering) { currentPageNum++; renderPage(currentPageNum); }
-        });
+
+        // ZOOM CON PELLIZCO (2 DEDOS) - fluido y nítido al terminar, conservando scroll
+        function initPinchZoom() {
+            var editorMain = document.getElementById('editor-main-container');
+            
+            editorMain.addEventListener('touchstart', function(e) {
+                if (!pdfDoc || pageIsRendering) return;
+                
+                if (e.touches.length === 2) {
+                    e.preventDefault();
+                    initialPinchDistance = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
+                    pinchStartScale = pdfScale;
+                } else if (e.touches.length === 1) {
+                    var now = Date.now();
+                    if (now - lastTapTime < 300 && pdfScale !== 1.0) {
+                        e.preventDefault();
+                        pdfScale = 1.0;
+                        updateZoomDisplay();
+                        renderPage(currentPageNum, false);
+                        editorMain.scrollTop = 0;
+                        editorMain.scrollLeft = 0;
+                    }
+                    lastTapTime = now;
+                }
+            }, { passive: false });
+            
+            editorMain.addEventListener('touchmove', function(e) {
+                if (!pdfDoc || pageIsRendering) return;
+                
+                if (e.touches.length === 2 && initialPinchDistance > 0) {
+                    e.preventDefault();
+                    var currentDistance = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
+                    var scaleFactor = currentDistance / initialPinchDistance;
+                    var newScale = pinchStartScale * scaleFactor;
+                    newScale = Math.max(0.5, Math.min(4, newScale));
+                    
+                    // Aplicar transform temporal para fluidez
+                    var container = document.getElementById('pdf-container');
+                    container.style.transform = 'scale(' + newScale + ')';
+                    container.style.transformOrigin = '0 0';
+                    updateZoomDisplayTemp(newScale);
+                }
+            }, { passive: false });
+            
+            editorMain.addEventListener('touchend', function(e) {
+                if (initialPinchDistance > 0 && e.touches.length < 2) {
+                    var container = document.getElementById('pdf-container');
+                    var currentTransform = container.style.transform;
+                    var match = currentTransform.match(/scale\(([^)]+)\)/);
+                    if (match) {
+                        var finalScale = parseFloat(match[1]);
+                        if (!isNaN(finalScale) && finalScale > 0) {
+                            pdfScale = finalScale;
+                        }
+                    }
+                    initialPinchDistance = 0;
+                    updateZoomDisplay();
+                    // Re-renderizar manteniendo la posición de scroll
+                    renderPage(currentPageNum, true);
+                }
+            });
+        }
+
+        function updateZoomDisplayTemp(tempScale) {
+            document.getElementById('zoom-level').textContent = Math.round(tempScale * 100) + '%';
+        }
+
+        document.getElementById('pdf-prev').addEventListener('click', function() { if (currentPageNum > 1 && !pageIsRendering) { currentPageNum--; renderPage(currentPageNum); } });
+        document.getElementById('pdf-next').addEventListener('click', function() { if (pdfDoc && currentPageNum < pdfDoc.numPages && !pageIsRendering) { currentPageNum++; renderPage(currentPageNum); } });
 
         document.addEventListener('keydown', function(e) {
             if (document.getElementById('view-editor').classList.contains('hidden')) return;
-            if ((e.key === 'ArrowLeft') && currentPageNum > 1 && !pageIsRendering) { currentPageNum--; renderPage(currentPageNum); }
-            else if ((e.key === 'ArrowRight') && pdfDoc && currentPageNum < pdfDoc.numPages && !pageIsRendering) { currentPageNum++; renderPage(currentPageNum); }
+            if (e.key === 'ArrowLeft' && currentPageNum > 1 && !pageIsRendering) { currentPageNum--; renderPage(currentPageNum); }
+            else if (e.key === 'ArrowRight' && pdfDoc && currentPageNum < pdfDoc.numPages && !pageIsRendering) { currentPageNum++; renderPage(currentPageNum); }
         });
 
-        // ===== SISTEMA DE ZOOM Y DESPLAZAMIENTO TÁCTIL =====
-        var mainEl = document.getElementById('editor-main-container');
-        var pdfContainer = document.getElementById('pdf-container');
-        var initialPinchDistance = 0;
-        var initialScale = 1;
-        var lastTapTime = 0;
-
-        mainEl.addEventListener('touchstart', function(e) {
+        // Zoom con Ctrl+Rueda (escritorio) - re-renderiza nítido
+        document.getElementById('editor-main-container').addEventListener('wheel', function(e) {
             if (!pdfDoc || pageIsRendering) return;
-
-            if (e.touches.length === 1) {
-                isPanning = true;
-                lastPanPoint = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-                var now = Date.now();
-                if (now - lastTapTime < 300) {
-                    if (pdfScale < 2) {
-                        pdfScale = Math.min(4, pdfScale * 1.8);
-                    } else {
-                        pdfScale = Math.max(0.5, pdfScale / 1.8);
-                    }
-                    updateZoomLevel();
-                    renderPage(currentPageNum);
-                    isPanning = false;
-                    e.preventDefault();
-                }
-                lastTapTime = now;
-            } else if (e.touches.length === 2) {
-                isPanning = false;
-                initialPinchDistance = Math.hypot(
-                    e.touches[0].clientX - e.touches[1].clientX,
-                    e.touches[0].clientY - e.touches[1].clientY
-                );
-                initialScale = pdfScale;
-                pdfContainer.style.transition = 'none';
-            }
-        }, { passive: false });
-
-        mainEl.addEventListener('touchmove', function(e) {
-            if (!pdfDoc || pageIsRendering) return;
-
-            if (e.touches.length === 2 && initialPinchDistance > 0) {
-                if (e.cancelable) e.preventDefault();
-                var currentDistance = Math.hypot(
-                    e.touches[0].clientX - e.touches[1].clientX,
-                    e.touches[0].clientY - e.touches[1].clientY
-                );
-                var newScale = initialScale * (currentDistance / initialPinchDistance);
-                newScale = Math.max(0.4, Math.min(4, newScale));
-                pdfContainer.style.transform = 'scale(' + newScale / pdfScale + ')';
-            } else if (e.touches.length === 1 && isPanning && pdfScale > 1.0) {
-                if (e.cancelable) e.preventDefault();
-                var deltaX = e.touches[0].clientX - lastPanPoint.x;
-                var deltaY = e.touches[0].clientY - lastPanPoint.y;
-                pdfPanX += deltaX;
-                pdfPanY += deltaY;
-                pdfContainer.style.transform = 'translate(' + pdfPanX + 'px,' + pdfPanY + 'px) scale(' + pdfScale + ')';
-                lastPanPoint = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-            }
-        }, { passive: false });
-
-        mainEl.addEventListener('touchend', function(e) {
-            if (!pdfDoc) return;
-
-            if (initialPinchDistance > 0) {
-                var match = pdfContainer.style.transform.match(/scale\(([^)]+)\)/);
-                if (match) {
-                    pdfScale = Math.max(0.4, Math.min(4, parseFloat(match[1]) * pdfScale));
-                }
-                updateZoomLevel();
-                pdfPanX = 0; pdfPanY = 0;
-                pdfContainer.style.transform = '';
-                renderPage(currentPageNum);
-            }
-
-            initialPinchDistance = 0;
-            if (e.touches.length === 0) {
-                isPanning = false;
-            }
-        });
-
-        mainEl.addEventListener('wheel', function(e) {
-            if (e.ctrlKey && pdfDoc && !pageIsRendering) {
+            if (e.ctrlKey || e.metaKey) {
                 e.preventDefault();
-                pdfScale += e.deltaY * -0.005;
-                pdfScale = Math.max(0.5, Math.min(4, pdfScale));
-                updateZoomLevel();
-                pdfPanX = 0; pdfPanY = 0;
-                pdfContainer.style.transform = '';
-                renderPage(currentPageNum);
+                var delta = e.deltaY > 0 ? -0.1 : 0.1;
+                pdfScale = Math.max(0.5, Math.min(4, pdfScale + delta));
+                updateZoomDisplay();
+                renderPage(currentPageNum, true);
             }
         }, { passive: false });
 
         document.getElementById('btn-save-exit').addEventListener('click', function() { saveData().then(function() { showView('dashboard'); }); });
         document.getElementById('btn-back-dashboard').addEventListener('click', function() { showView('dashboard'); });
 
+        document.getElementById('pdf-container').addEventListener('click', function(e) {
+            if (!e.target.closest('.annotation-pin') && !e.target.closest('.annotation-bubble')) closeAllBubbles();
+        });
+
+        var editorMain = document.getElementById('editor-main-container');
+        var isSelecting = false;
+        editorMain.addEventListener('touchstart', function(e) { if (e.target.closest('.textLayer span')) { isSelecting = true; } }, { passive: true });
+        editorMain.addEventListener('touchend', function() { setTimeout(function() { isSelecting = false; }, 100); });
+        editorMain.addEventListener('touchmove', function(e) { if (isSelecting && e.target.closest('.textLayer')) { return; } }, { passive: true });
+
         window.openFullscreenImage = function(src) {
-            var ov = document.createElement('div');
-            ov.className = 'fullscreen-overlay';
+            var ov = document.createElement('div'); ov.className = 'fullscreen-overlay';
             ov.innerHTML = '<img src="' + src + '" draggable="false"><div class="fullscreen-close">✕</div>';
             document.body.appendChild(ov);
-            var img = ov.querySelector('img'),
-                sc = 1,
-                px = 0,
-                py = 0,
-                sp = { x: 0, y: 0 },
-                pan = false,
-                pd = 0,
-                ps = 1;
-
+            var img = ov.querySelector('img'), sc = 1, px = 0, py = 0, sp = { x: 0, y: 0 }, pan = false, pd = 0, ps = 1;
             function up() { img.style.transform = 'translate(' + px + 'px,' + py + 'px) scale(' + sc + ')'; }
             ov.addEventListener('touchstart', function(e) { if (e.touches.length === 2) { pd = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); ps = sc; } else if (e.touches.length === 1 && sc > 1) { pan = true; sp.x = e.touches[0].clientX - px; sp.y = e.touches[0].clientY - py; } });
             ov.addEventListener('touchmove', function(e) { if (e.touches.length === 2 && pd > 0) { e.preventDefault(); var d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); sc = Math.max(1, Math.min(ps * (d / pd), 5)); up(); } else if (e.touches.length === 1 && pan) { e.preventDefault(); px = e.touches[0].clientX - sp.x; py = e.touches[0].clientY - sp.y; up(); } }, { passive: false });
@@ -1386,131 +972,89 @@
         };
 
         function initCamera() {
-            document.getElementById('btn-dock-camera').addEventListener('click', function() { if (!pdfDoc) return alert('Carga un PDF primero'); if (confirm('¿Grabar video? (Cancelar = Foto)')) { recordVideo(); } else { document.getElementById('file-camera').click(); } });
+            document.getElementById('btn-dock-camera').addEventListener('click', function() { if (!pdfDoc) return alert('Carga un PDF primero'); if (confirm('¿Grabar video?')) { recordVideo(); } else { document.getElementById('file-camera').click(); } });
             document.getElementById('file-camera').addEventListener('change', async function(e) { var f = e.target.files[0]; if (!f) return; var isV = f.type.startsWith('video/'); var key = 'media_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); await saveBlob(key, f); addAnnotation(45, 40, '', isV ? 'video' : 'photo', URL.createObjectURL(f), key); });
         }
 
         function recordVideo() {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { alert('No soportado.'); document.getElementById('file-camera').click(); return; }
-            var modal = document.createElement('div');
-            modal.className = 'video-recorder';
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { document.getElementById('file-camera').click(); return; }
+            var modal = document.createElement('div'); modal.className = 'video-recorder';
             modal.innerHTML = '<video autoplay muted playsinline></video><div class="recorder-bar"><div class="rec-circle" id="rec-start">⏺</div><span class="rec-timer" id="rec-timer">00:00</span><div class="rec-circle" id="rec-stop" style="display:none">⏹</div><div class="rec-circle" id="rec-close">✕</div></div>';
             document.body.appendChild(modal);
-            var video = modal.querySelector('video'),
-                bs = modal.querySelector('#rec-start'),
-                bp = modal.querySelector('#rec-stop'),
-                bc = modal.querySelector('#rec-close'),
-                te = modal.querySelector('#rec-timer'),
-                rec, chunks = [],
-                stream, timer, secs = 0;
-            
-            function cleanup() { 
-                clearInterval(timer); 
-                if (stream) stream.getTracks().forEach(function(t) { t.stop(); }); 
-                modal.remove(); 
-            }
-
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: true }).then(function(s) { 
-                stream = s;
-                video.srcObject = s;
-                bs.addEventListener('click', function() { 
-                    chunks = [];
-                    rec = new MediaRecorder(s);
-                    rec.ondataavailable = function(e) { if (e.data.size > 0) chunks.push(e.data); };
-                    rec.onstop = async function() { 
-                        var blob = new Blob(chunks, { type: 'video/webm' }); 
-                        var key = 'media_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); 
-                        await saveBlob(key, blob);
-                        addAnnotation(45, 40, '', 'video', URL.createObjectURL(blob), key);
-                        cleanup(); 
-                    };
-                    rec.start();
-                    bs.style.display = 'none';
-                    bp.style.display = 'flex';
-                    secs = 0;
-                    timer = setInterval(function() { 
-                        secs++;
-                        te.textContent = String(Math.floor(secs / 60)).padStart(2, '0') + ':' + String(secs % 60).padStart(2, '0'); 
-                    }, 1000); 
-                });
-                bp.addEventListener('click', function() { 
-                    if (rec && rec.state === 'recording') rec.stop(); 
-                });
-                bc.addEventListener('click', function() { 
-                    if (rec && rec.state === 'recording') { 
-                        rec.stop();
-                    } else { 
-                        cleanup(); 
-                    } 
-                });
-            }).catch(function() { 
-                alert('Error de cámara.');
-                modal.remove();
-                document.getElementById('file-camera').click(); 
-            });
+            var video = modal.querySelector('video'), bs = modal.querySelector('#rec-start'), bp = modal.querySelector('#rec-stop'), bc = modal.querySelector('#rec-close'), te = modal.querySelector('#rec-timer'), rec, chunks = [], stream, timer, secs = 0;
+            function cleanup() { clearInterval(timer); if (stream) stream.getTracks().forEach(function(t) { t.stop(); }); modal.remove(); }
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: true }).then(function(s) {
+                stream = s; video.srcObject = s;
+                bs.addEventListener('click', function() { chunks = []; rec = new MediaRecorder(s); rec.ondataavailable = function(e) { if (e.data.size > 0) chunks.push(e.data); }; rec.onstop = async function() { var blob = new Blob(chunks, { type: 'video/webm' }); var key = 'media_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); await saveBlob(key, blob); addAnnotation(45, 40, '', 'video', URL.createObjectURL(blob), key); cleanup(); }; rec.start(); bs.style.display = 'none'; bp.style.display = 'flex'; secs = 0; timer = setInterval(function() { secs++; te.textContent = String(Math.floor(secs / 60)).padStart(2, '0') + ':' + String(secs % 60).padStart(2, '0'); }, 1000); });
+                bp.addEventListener('click', function() { if (rec && rec.state === 'recording') rec.stop(); });
+                bc.addEventListener('click', function() { if (rec && rec.state === 'recording') { rec.stop(); } else { cleanup(); } });
+            }).catch(function() { modal.remove(); document.getElementById('file-camera').click(); });
         }
 
         function addAnnotation(x, y, text, type, url, key, applyOffset) {
-            if (applyOffset === undefined) applyOffset = true;
-            text = text || '';
+            if (applyOffset === undefined) applyOffset = true; text = text || '';
             if (applyOffset && type !== 'replacement') { x += (Math.random() * 10) - 5; y += (Math.random() * 10) - 5; }
-            else if (applyOffset && type === 'replacement') { x += (Math.random() * 4) - 2; y += -3; }
-            x = Math.max(2, Math.min(95, x));
-            y = Math.max(2, Math.min(95, y));
+            x = Math.max(2, Math.min(95, x)); y = Math.max(2, Math.min(95, y));
             var ann = { id: 'a_' + Date.now(), x: x, y: y, text: text, type: type, mediaUrl: url || null, mediaKey: key || null };
             if (!currentProject.annotations[currentPageNum]) currentProject.annotations[currentPageNum] = [];
             currentProject.annotations[currentPageNum].push(ann);
-            drawAnnotation(ann, true, applyOffset);
-            saveData();
+            drawAnnotation(ann, true, applyOffset); saveData();
         }
 
-        function addReplacement(rects, original, applyOffset) {
-            if (applyOffset === undefined) applyOffset = true;
-            var x = rects[0].x, y = rects[0].y - 4;
-            if (applyOffset) { x += (Math.random() * 4) - 2; y -= 2; }
-            x = Math.max(2, Math.min(95, x));
-            y = Math.max(2, Math.min(95, y));
+        function addReplacement(rects, original) {
+            var r = rects[0];
+            var x = r.x + r.w + 2;
+            var y = r.y;
+            x = Math.max(2, Math.min(95, x)); y = Math.max(2, Math.min(95, y));
             var ann = { id: 'a_' + Date.now(), x: x, y: y, rects: rects, originalText: original, text: '', type: 'replacement' };
             if (!currentProject.annotations[currentPageNum]) currentProject.annotations[currentPageNum] = [];
             currentProject.annotations[currentPageNum].push(ann);
-            drawAnnotation(ann, true, applyOffset);
-            saveData();
+            drawAnnotation(ann, true, true); saveData();
         }
 
         async function drawAnnotation(ann, autoExpand, glow) {
-            var wrap = document.createElement('div');
-            wrap.className = 'annotation-wrapper';
-            wrap.style.left = ann.x + '%';
-            wrap.style.top = ann.y + '%';
-            wrap.id = 'wrap-' + ann.id;
+            var wrap = document.createElement('div'); wrap.className = 'annotation-wrapper';
+            wrap.style.left = ann.x + '%'; wrap.style.top = ann.y + '%'; wrap.id = 'wrap-' + ann.id;
             var idx = (currentProject.annotations[currentPageNum] || []).indexOf(ann) + 1;
             var symbol = idx;
-            if (ann.type === 'photo') symbol = '📷';
-            else if (ann.type === 'video') symbol = '🎬';
-            else if (ann.type === 'audio') symbol = '🎵';
-            else if (ann.type === 'timer') symbol = '⏱️';
-            else if (ann.type === 'replacement') symbol = '✂️';
+            if (ann.type === 'photo') symbol = '📷'; else if (ann.type === 'video') symbol = '🎬';
+            else if (ann.type === 'audio') symbol = '🎵'; else if (ann.type === 'timer') symbol = '⏱️';
+            else if (ann.type === 'replacement') symbol = '✏️';
+
             var pinClass = 'annotation-pin' + (ann.type === 'replacement' ? ' pin-replacement' : '');
             if (glow) pinClass += ' glow-effect';
-            if (ann.type === 'replacement' && ann.rects) { ann.rects.forEach(function(r) { var s = document.createElement('div'); s.className = 'strike-overlay strike-' + ann.id; s.style.left = r.x + '%'; s.style.top = (r.y + r.h / 2) + '%'; s.style.width = r.w + '%'; document.getElementById('annotation-layer').appendChild(s); }); }
+
+            if (ann.type === 'replacement' && ann.rects) {
+                ann.rects.forEach(function(r) {
+                    var s = document.createElement('div'); s.className = 'strike-overlay strike-' + ann.id;
+                    s.style.left = r.x + '%'; s.style.top = (r.y + r.h / 2) + '%'; s.style.width = r.w + '%';
+                    document.getElementById('annotation-layer').appendChild(s);
+                });
+            }
+
             var displayUrl = ann.mediaUrl;
             if (ann.mediaKey && !displayUrl) { var blob = await getBlob(ann.mediaKey); if (blob) displayUrl = URL.createObjectURL(blob); }
+
             var badgeType = 'badge-note';
-            if (ann.type === 'photo') badgeType = 'badge-photo';
-            else if (ann.type === 'video') badgeType = 'badge-video';
-            else if (ann.type === 'audio') badgeType = 'badge-audio';
-            else if (ann.type === 'timer') badgeType = 'badge-timer';
-            else if (ann.type === 'replacement') badgeType = 'badge-replacement';
+            if (ann.type === 'photo') badgeType = 'badge-photo'; else if (ann.type === 'video') badgeType = 'badge-video';
+            else if (ann.type === 'audio') badgeType = 'badge-audio'; else if (ann.type === 'timer') badgeType = 'badge-timer';
+            else if (ann.type === 'replacement') badgeType = 'badge-reemplazo';
+
             var bubbleClass = 'annotation-bubble' + (autoExpand ? '' : ' hidden');
             if (ann.type === 'replacement') bubbleClass += ' bubble-replacement';
-            var html = '<div class="' + pinClass + '"><span>' + symbol + '</span></div><div class="' + bubbleClass + '" id="bubble-' + ann.id + '" onclick="event.stopPropagation()"><div class="bubble-header"><span class="bubble-type-badge ' + badgeType + '">' + ann.type.toUpperCase() + '</span><span style="font-size:0.7rem;">#' + idx + '</span></div>';
+            var typeLabel = typeNames[ann.type] || ann.type;
+
+            var html = '<div class="' + pinClass + '"><span>' + symbol + '</span></div>' +
+                '<div class="' + bubbleClass + '" id="bubble-' + ann.id + '" onclick="event.stopPropagation()">' +
+                '<div class="bubble-header"><span class="bubble-type-badge ' + badgeType + '">' + typeLabel + '</span><span style="font-size:0.65rem;">#' + idx + '</span></div>';
+
             if (ann.type === 'text') { html += '<textarea id="ta-' + ann.id + '" placeholder="Escribe tu nota...">' + (ann.text || '') + '</textarea>'; }
-            else if (ann.type === 'replacement') { html += '<div style="background:var(--bg);padding:8px;border-radius:6px;margin-bottom:4px;font-size:0.8rem;"><span style="color:var(--danger);text-decoration:line-through;">' + (ann.originalText || '') + '</span></div><textarea id="ta-' + ann.id + '" placeholder="Texto de reemplazo...">' + (ann.text || '') + '</textarea>'; }
+            else if (ann.type === 'replacement') { html += '<div style="background:var(--bg);padding:6px;border-radius:6px;margin-bottom:3px;font-size:0.75rem;"><span style="color:var(--text-secondary);">Original: </span><span style="color:var(--text);">' + (ann.originalText || '') + '</span></div><textarea id="ta-' + ann.id + '" placeholder="Reemplazo...">' + (ann.text || '') + '</textarea>'; }
             else if (ann.type === 'photo') { html += '<img src="' + displayUrl + '" onclick="window.openFullscreenImage(this.src)" loading="lazy"><textarea id="ta-' + ann.id + '" placeholder="Nota de la foto...">' + (ann.text || '') + '</textarea>'; }
             else if (ann.type === 'video') { html += '<video controls playsinline src="' + displayUrl + '" preload="metadata"></video><textarea id="ta-' + ann.id + '" placeholder="Nota del video...">' + (ann.text || '') + '</textarea>'; }
-            else if (ann.type === 'audio') { html += '<audio controls src="' + displayUrl + '" style="width:100%;margin-bottom:4px;"></audio><textarea id="ta-' + ann.id + '" placeholder="Nota del audio...">' + (ann.text || '') + '</textarea>'; }
+            else if (ann.type === 'audio') { html += '<audio controls src="' + displayUrl + '" style="width:100%;margin-bottom:3px;"></audio><textarea id="ta-' + ann.id + '" placeholder="Nota del audio...">' + (ann.text || '') + '</textarea>'; }
             else if (ann.type === 'timer') { html += '<div class="time-badge">⏱️ ' + (ann.mediaUrl || '00:00.00') + '</div><textarea id="ta-' + ann.id + '" placeholder="Nota del tiempo...">' + (ann.text || '') + '</textarea>'; }
-            html += '<button class="btn-sm" style="color:var(--danger);align-self:flex-end;margin-top:4px;" id="del-' + ann.id + '">🗑️ Eliminar</button></div>';
+            html += '<button class="btn-sm" style="color:var(--danger);align-self:flex-end;margin-top:3px;" id="del-' + ann.id + '">🗑️ Eliminar</button></div>';
             wrap.innerHTML = html;
             document.getElementById('annotation-layer').appendChild(wrap);
             if (glow) { var pin = wrap.querySelector('.annotation-pin'); if (pin) pin.addEventListener('animationend', function() { pin.classList.remove('glow-effect'); }); }
@@ -1521,72 +1065,54 @@
         }
 
         function makeDraggable(wrap, ann) {
-            var pin = wrap.querySelector('.annotation-pin'),
-                dragging = false,
-                wasDragged = false,
-                sx, sy;
+            if (ann.type === 'replacement') {
+                var pinR = wrap.querySelector('.annotation-pin');
+                if (pinR) {
+                    pinR.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        var b = document.getElementById('bubble-' + ann.id);
+                        if (b) { var hidden = b.classList.contains('hidden'); closeAllBubbles(); if (hidden) b.classList.remove('hidden'); }
+                    });
+                }
+                return;
+            }
 
+            var pin = wrap.querySelector('.annotation-pin'), dragging = false, wasDragged = false, sx, sy;
             function start(e) {
                 if (e.target.closest('.annotation-bubble')) return;
-                dragging = true;
-                wasDragged = false;
-                var cx = e.touches ? e.touches[0].clientX : e.clientX,
-                    cy = e.touches ? e.touches[0].clientY : e.clientY,
-                    r = wrap.getBoundingClientRect();
-                sx = cx - r.left;
-                sy = cy - r.top;
-                document.addEventListener('mousemove', move);
-                document.addEventListener('mouseup', end);
-                document.addEventListener('touchmove', move, { passive: false });
-                document.addEventListener('touchend', end);
+                dragging = true; wasDragged = false;
+                var cx = e.touches ? e.touches[0].clientX : e.clientX, cy = e.touches ? e.touches[0].clientY : e.clientY, r = wrap.getBoundingClientRect();
+                sx = cx - r.left; sy = cy - r.top;
+                pin.style.cursor = 'grabbing'; pin.style.transition = 'none';
+                document.addEventListener('mousemove', move); document.addEventListener('mouseup', end);
+                document.addEventListener('touchmove', move, { passive: false }); document.addEventListener('touchend', end);
             }
-
             function move(e) {
-                if (!dragging) return;
-                wasDragged = true;
-                if (e.cancelable) e.preventDefault();
-                var cx = e.touches ? e.touches[0].clientX : e.clientX,
-                    cy = e.touches ? e.touches[0].clientY : e.clientY,
-                    cr = document.getElementById('pdf-container').getBoundingClientRect(),
-                    xp = ((cx - cr.left - sx) / cr.width) * 100,
-                    yp = ((cy - cr.top - sy) / cr.height) * 100;
-                xp = Math.max(0, Math.min(100, xp));
-                yp = Math.max(0, Math.min(100, yp));
-                wrap.style.left = xp + '%';
-                wrap.style.top = yp + '%';
-                ann.x = xp;
-                ann.y = yp;
+                if (!dragging) return; wasDragged = true; if (e.cancelable) e.preventDefault();
+                var cx = e.touches ? e.touches[0].clientX : e.clientX, cy = e.touches ? e.touches[0].clientY : e.clientY, cr = document.getElementById('pdf-container').getBoundingClientRect();
+                var xp = ((cx - cr.left - sx) / cr.width) * 100, yp = ((cy - cr.top - sy) / cr.height) * 100;
+                xp = Math.max(0, Math.min(100, xp)); yp = Math.max(0, Math.min(100, yp));
+                wrap.style.left = xp + '%'; wrap.style.top = yp + '%'; ann.x = xp; ann.y = yp;
             }
-
             function end() {
-                dragging = false;
+                dragging = false; pin.style.cursor = 'pointer'; pin.style.transition = 'transform 0.2s';
                 saveData();
-                document.removeEventListener('mousemove', move);
-                document.removeEventListener('mouseup', end);
-                document.removeEventListener('touchmove', move);
-                document.removeEventListener('touchend', end);
+                document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', end);
+                document.removeEventListener('touchmove', move); document.removeEventListener('touchend', end);
             }
-            pin.addEventListener('mousedown', start);
-            pin.addEventListener('touchstart', start, { passive: false });
-            pin.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (wasDragged) return;
-                var b = document.getElementById('bubble-' + ann.id),
-                    hidden = b.classList.contains('hidden');
-                closeAllBubbles();
-                if (hidden) b.classList.remove('hidden');
-            });
+            pin.addEventListener('mousedown', start); pin.addEventListener('touchstart', start, { passive: false });
+            pin.addEventListener('click', function(e) { e.stopPropagation(); if (wasDragged) return; var b = document.getElementById('bubble-' + ann.id); if (b) { var hidden = b.classList.contains('hidden'); closeAllBubbles(); if (hidden) b.classList.remove('hidden'); } });
         }
 
         function closeAllBubbles() { document.querySelectorAll('.annotation-bubble').forEach(function(b) { b.classList.add('hidden'); }); }
+
         async function deleteAnnotation(id) {
-            if (!confirm('¿Eliminar?')) return;
+            if (!confirm('¿Eliminar esta anotación?')) return;
             var anns = currentProject.annotations[currentPageNum] || [];
             var ann = anns.find(function(a) { return a.id === id; });
             if (ann && ann.mediaKey) await deleteBlob(ann.mediaKey);
             currentProject.annotations[currentPageNum] = anns.filter(function(a) { return a.id !== id; });
-            var wrap = document.getElementById('wrap-' + id);
-            if (wrap) wrap.remove();
+            var wrap = document.getElementById('wrap-' + id); if (wrap) wrap.remove();
             document.querySelectorAll('.strike-' + id).forEach(function(s) { s.remove(); });
             saveData();
         }
@@ -1605,70 +1131,39 @@
 
         function startDragNote(e) {
             if (!pdfDoc) return alert('Carga un PDF primero');
-            var ghost = document.createElement('div');
-            ghost.className = 'annotation-pin';
-            ghost.style.cssText = 'position:fixed;z-index:9999;pointer-events:none;';
-            ghost.innerHTML = '<span>📝</span>';
+            var ghost = document.createElement('div'); ghost.className = 'annotation-pin';
+            ghost.style.cssText = 'position:fixed;z-index:9999;pointer-events:none;'; ghost.innerHTML = '<span>📝</span>';
             document.body.appendChild(ghost);
-
-            function move(ev) { var cx = ev.touches ? ev.touches[0].clientX : ev.clientX, cy = ev.touches ? ev.touches[0].clientY : ev.clientY; ghost.style.left = (cx - 15) + 'px'; ghost.style.top = (cy - 15) + 'px'; }
+            function move(ev) { var cx = ev.touches ? ev.touches[0].clientX : ev.clientX, cy = ev.touches ? ev.touches[0].clientY : ev.clientY; ghost.style.left = (cx - 13) + 'px'; ghost.style.top = (cy - 13) + 'px'; }
             move(e);
-
             function moveH(ev) { if (ev.cancelable) ev.preventDefault(); move(ev); }
-
             function end(ev) {
-                document.removeEventListener('mousemove', moveH);
-                document.removeEventListener('mouseup', end);
-                document.removeEventListener('touchmove', moveH);
-                document.removeEventListener('touchend', end);
-                var cx = ev.changedTouches ? ev.changedTouches[0].clientX : ev.clientX,
-                    cy = ev.changedTouches ? ev.changedTouches[0].clientY : ev.clientY,
-                    cr = document.getElementById('pdf-container').getBoundingClientRect();
-                if (cx >= cr.left && cx <= cr.right && cy >= cr.top && cy <= cr.bottom) {
-                    addAnnotation(((cx - cr.left) / cr.width) * 100, ((cy - cr.top) / cr.height) * 100, '', 'text', null, null, false);
-                }
+                document.removeEventListener('mousemove', moveH); document.removeEventListener('mouseup', end);
+                document.removeEventListener('touchmove', moveH); document.removeEventListener('touchend', end);
+                var cx = ev.changedTouches ? ev.changedTouches[0].clientX : ev.clientX, cy = ev.changedTouches ? ev.changedTouches[0].clientY : ev.clientY, cr = document.getElementById('pdf-container').getBoundingClientRect();
+                if (cx >= cr.left && cx <= cr.right && cy >= cr.top && cy <= cr.bottom) { addAnnotation(((cx - cr.left) / cr.width) * 100, ((cy - cr.top) / cr.height) * 100, '', 'text', null, null, false); }
                 ghost.remove();
             }
-            document.addEventListener('mousemove', moveH);
-            document.addEventListener('mouseup', end);
-            document.addEventListener('touchmove', moveH, { passive: false });
-            document.addEventListener('touchend', end);
+            document.addEventListener('mousemove', moveH); document.addEventListener('mouseup', end);
+            document.addEventListener('touchmove', moveH, { passive: false }); document.addEventListener('touchend', end);
         }
 
         function initReplacement() {
             document.getElementById('btn-dock-replacement').addEventListener('click', function() {
                 if (!pdfDoc) return alert('Carga un PDF primero');
-                var sel = window.getSelection(),
-                    text = sel.toString().trim();
+                var sel = window.getSelection(), text = sel.toString().trim();
                 if (!text) return alert('Selecciona el texto primero');
-                var range = sel.getRangeAt(0),
-                    rects = range.getClientRects();
+                var range = sel.getRangeAt(0), rects = range.getClientRects();
                 if (rects.length === 0) return;
-                var cr = document.getElementById('pdf-container').getBoundingClientRect(),
-                    strikeRects = [],
-                    valid = true;
+                var cr = document.getElementById('pdf-container').getBoundingClientRect(), strikeRects = [], valid = true;
                 for (var i = 0; i < rects.length; i++) {
                     var r = rects[i];
                     if (r.left >= cr.left && r.right <= cr.right && r.top >= cr.top && r.bottom <= cr.bottom) {
-                        strikeRects.push({
-                            x: ((r.left - cr.left) / cr.width) * 100,
-                            y: ((r.top - cr.top) / cr.height) * 100,
-                            w: (r.width / cr.width) * 100,
-                            h: (r.height / cr.height) * 100
-                        });
-                    } else {
-                        valid = false;
-                    }
+                        strikeRects.push({ x: ((r.left - cr.left) / cr.width) * 100, y: ((r.top - cr.top) / cr.height) * 100, w: (r.width / cr.width) * 100, h: (r.height / cr.height) * 100 });
+                    } else { valid = false; }
                 }
-                if (valid && strikeRects.length > 0) {
-                    sel.removeAllRanges();
-                    addReplacement(strikeRects, text);
-                } else {
-                    alert('La selección debe estar dentro del documento');
-                }
-            });
-            document.getElementById('editor-main-container').addEventListener('click', function(e) {
-                if (e.target === this || e.target === document.getElementById('pdf-text-layer')) closeAllBubbles();
+                if (valid && strikeRects.length > 0) { sel.removeAllRanges(); addReplacement(strikeRects, text); }
+                else { alert('Selecciona texto dentro del documento'); }
             });
         }
 
@@ -1677,374 +1172,87 @@
             document.getElementById('btn-dock-audio').addEventListener('click', function() {
                 if (!pdfDoc) return alert('Carga un PDF primero');
                 if (!recording) {
-                    navigator.mediaDevices.getUserMedia({ audio: true }).then(function(s) {
-                        rec = new MediaRecorder(s);
-                        rec.ondataavailable = function(e) { chunks.push(e.data); };
-                        rec.onstop = async function() {
-                            var blob = new Blob(chunks, { type: 'audio/webm' });
-                            var key = 'media_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                            await saveBlob(key, blob);
-                            addAnnotation(50, 45, '', 'audio', URL.createObjectURL(blob), key);
-                            chunks = [];
-                            s.getTracks().forEach(function(t) { t.stop(); });
-                        };
-                        rec.start();
-                        recording = true;
-                        document.getElementById('btn-dock-audio').classList.add('dock-btn-recording');
-                    }).catch(function() { alert('Permite el micrófono'); });
-                } else {
-                    if (rec && rec.state === 'recording') {
-                        rec.stop();
-                    }
-                    recording = false;
-                    document.getElementById('btn-dock-audio').classList.remove('dock-btn-recording');
-                }
+                    navigator.mediaDevices.getUserMedia({ audio: true }).then(function(s) { rec = new MediaRecorder(s); rec.ondataavailable = function(e) { chunks.push(e.data); }; rec.onstop = async function() { var blob = new Blob(chunks, { type: 'audio/webm' }); var key = 'media_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); await saveBlob(key, blob); addAnnotation(50, 45, '', 'audio', URL.createObjectURL(blob), key); chunks = []; s.getTracks().forEach(function(t) { t.stop(); }); }; rec.start(); recording = true; document.getElementById('btn-dock-audio').classList.add('dock-btn-recording'); }).catch(function() { alert('Permite el micrófono'); });
+                } else { if (rec && rec.state === 'recording') rec.stop(); recording = false; document.getElementById('btn-dock-audio').classList.remove('dock-btn-recording'); }
             });
         })();
 
         function initTimer() {
-            var modal = document.getElementById('timer-modal'),
-                display = document.getElementById('timer-display'),
-                bs = document.getElementById('btn-timer-start'),
-                bp = document.getElementById('btn-timer-stop'),
-                bv = document.getElementById('btn-timer-save'),
-                bc = document.getElementById('btn-timer-cancel'),
-                interval, st = 0, elapsed = 0, running = false;
-
+            var modal = document.getElementById('timer-modal'), display = document.getElementById('timer-display'), bs = document.getElementById('btn-timer-start'), bp = document.getElementById('btn-timer-stop'), bv = document.getElementById('btn-timer-save'), bc = document.getElementById('btn-timer-cancel'), interval, st = 0, elapsed = 0, running = false;
             function fmt(ms) { var s = Math.floor(ms / 1000); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0') + '.' + String(Math.floor((ms % 1000) / 10)).padStart(2, '0'); }
             function upd() { display.textContent = fmt(elapsed + (running ? Date.now() - st : 0)); }
             function reset() { running = false; clearInterval(interval); elapsed = 0; upd(); bs.classList.remove('hidden'); bp.classList.add('hidden'); bv.disabled = true; }
-            document.getElementById('btn-dock-timer').addEventListener('click', function() {
-                if (!pdfDoc) return alert('Carga un PDF primero');
-                reset();
-                modal.classList.remove('hidden');
-            });
-            bs.addEventListener('click', function() {
-                st = Date.now();
-                running = true;
-                interval = setInterval(upd, 10);
-                bs.classList.add('hidden');
-                bp.classList.remove('hidden');
-                bv.disabled = true;
-            });
-            bp.addEventListener('click', function() {
-                running = false;
-                clearInterval(interval);
-                elapsed += Date.now() - st;
-                upd();
-                bs.classList.remove('hidden');
-                bp.classList.add('hidden');
-                bv.disabled = false;
-            });
+            document.getElementById('btn-dock-timer').addEventListener('click', function() { if (!pdfDoc) return alert('Carga un PDF primero'); reset(); modal.classList.remove('hidden'); });
+            bs.addEventListener('click', function() { st = Date.now(); running = true; interval = setInterval(upd, 10); bs.classList.add('hidden'); bp.classList.remove('hidden'); bv.disabled = true; });
+            bp.addEventListener('click', function() { running = false; clearInterval(interval); elapsed += Date.now() - st; upd(); bs.classList.remove('hidden'); bp.classList.add('hidden'); bv.disabled = false; });
             bc.addEventListener('click', function() { reset(); modal.classList.add('hidden'); });
-            bv.addEventListener('click', function() {
-                var t = fmt(elapsed);
-                reset();
-                modal.classList.add('hidden');
-                addAnnotation(50, 50, '', 'timer', t, null);
-            });
+            bv.addEventListener('click', function() { var t = fmt(elapsed); reset(); modal.classList.add('hidden'); addAnnotation(50, 50, '', 'timer', t, null); });
         }
 
-        // ============== EXPORTACIÓN COMPLETA CON ZIP ==============
         async function exportFullBackup() {
-            var data = await localforage.getItem('misnotas_projects');
-            if (!data || !data.length) return alert('No hay datos para exportar');
-
-            var progressModal = document.createElement('div');
-            progressModal.className = 'modal-overlay';
-            progressModal.innerHTML = '<div class="whatsapp-modal" style="text-align:center;"><h3>📦 Preparando respaldo...</h3><div class="progress-bar"><div class="progress-bar-fill" id="export-progress"></div></div><p style="font-size:0.85rem;color:var(--text-secondary);" id="export-status">Recopilando datos...</p></div>';
-            document.body.appendChild(progressModal);
-            var progressFill = progressModal.querySelector('#export-progress');
-            var statusText = progressModal.querySelector('#export-status');
-
+            var data = await localforage.getItem('misnotas_projects'); if (!data || !data.length) return alert('No hay datos');
+            var pm = document.createElement('div'); pm.className = 'modal-overlay';
+            pm.innerHTML = '<div class="whatsapp-modal" style="text-align:center;"><h3>📦 Preparando...</h3><div class="progress-bar"><div class="progress-bar-fill" id="export-progress"></div></div><p id="export-status" style="font-size:0.8rem;">Recopilando...</p></div>';
+            document.body.appendChild(pm); var pf = pm.querySelector('#export-progress'), st = pm.querySelector('#export-status');
             try {
-                var zip = new JSZip();
-                var totalItems = 0;
-                var processedItems = 0;
-
-                data.forEach(function(p) {
-                    totalItems++;
-                    for (var pg in p.annotations) totalItems += p.annotations[pg].length;
-                });
-
-                function updateProgress() {
-                    processedItems++;
-                    var pct = Math.round((processedItems / totalItems) * 100);
-                    progressFill.style.width = pct + '%';
-                    statusText.textContent = 'Procesando... ' + pct + '%';
-                }
-
-                var cleanData = [];
-                for (var i = 0; i < data.length; i++) {
-                    var p = data[i];
-                    var cp = { id: p.id, name: p.name, timestamp: p.timestamp, pdfData: p.pdfData, annotations: {} };
-
-                    for (var pg in p.annotations) {
-                        cp.annotations[pg] = [];
-                        for (var j = 0; j < p.annotations[pg].length; j++) {
-                            var ann = p.annotations[pg][j];
-                            var ca = { id: ann.id, x: ann.x, y: ann.y, text: ann.text, type: ann.type };
-                            if (ann.type === 'replacement') {
-                                ca.rects = ann.rects;
-                                ca.originalText = ann.originalText;
-                            }
-                            if (ann.mediaKey) {
-                                var blob = await getBlob(ann.mediaKey);
-                                if (blob) {
-                                    var ext = ann.type === 'photo' ? '.jpg' : (ann.type === 'video' || ann.type === 'audio') ? '.webm' : '.bin';
-                                    var fileName = 'media/' + ann.mediaKey + ext;
-                                    zip.file(fileName, blob);
-                                    ca.mediaFile = fileName;
-                                    ca.mediaType = blob.type;
-                                }
-                            } else if (ann.mediaUrl && ann.type === 'timer') {
-                                ca.mediaUrl = ann.mediaUrl;
-                            }
-                            cp.annotations[pg].push(ca);
-                            updateProgress();
-                        }
-                    }
-                    cleanData.push(cp);
-                    updateProgress();
-                }
-
-                statusText.textContent = 'Comprimiendo archivos...';
-                progressFill.style.width = '95%';
-                zip.file('data.json', JSON.stringify(cleanData));
-                var zipBlob = await zip.generateAsync({ type: 'blob' });
-
-                progressFill.style.width = '100%';
-                statusText.textContent = '¡Respaldo listo!';
-
+                var zip = new JSZip(), ti = 0, pi = 0; data.forEach(function(p) { ti++; for (var pg in p.annotations) ti += p.annotations[pg].length; });
+                function up() { pi++; pf.style.width = Math.round((pi / ti) * 100) + '%'; st.textContent = pi + '/' + ti; }
+                var cd = [];
+                for (var i = 0; i < data.length; i++) { var p = data[i], cp = { id: p.id, name: p.name, timestamp: p.timestamp, pdfData: p.pdfData, annotations: {} }; for (var pg in p.annotations) { cp.annotations[pg] = []; for (var j = 0; j < p.annotations[pg].length; j++) { var ann = p.annotations[pg][j], ca = { id: ann.id, x: ann.x, y: ann.y, text: ann.text, type: ann.type }; if (ann.type === 'replacement') { ca.rects = ann.rects; ca.originalText = ann.originalText; } if (ann.mediaKey) { var blob = await getBlob(ann.mediaKey); if (blob) { var ext = ann.type === 'photo' ? '.jpg' : (ann.type === 'video' || ann.type === 'audio') ? '.webm' : '.bin'; zip.file('media/' + ann.mediaKey + ext, blob); ca.mediaFile = 'media/' + ann.mediaKey + ext; ca.mediaType = blob.type; } } else if (ann.mediaUrl && ann.type === 'timer') { ca.mediaUrl = ann.mediaUrl; } cp.annotations[pg].push(ca); up(); } } cd.push(cp); up(); }
+                st.textContent = 'Comprimiendo...'; pf.style.width = '95%';
+                zip.file('data.json', JSON.stringify(cd)); var zb = await zip.generateAsync({ type: 'blob' });
+                pf.style.width = '100%'; st.textContent = 'Listo';
                 setTimeout(function() {
-                    progressModal.remove();
-                    showExportOptions(zipBlob);
-                }, 500);
-
-            } catch (err) {
-                progressModal.remove();
-                alert('Error al crear el respaldo: ' + err.message);
-                console.error(err);
-            }
+                    pm.remove();
+                    var fileName = 'MisNotas_Respaldo_' + new Date().toISOString().slice(0, 10) + '.zip';
+                    downloadZipFile(zb, fileName);
+                    showToast('✅ Archivo descargado');
+                }, 400);
+            } catch (err) { pm.remove(); alert('Error: ' + err.message); }
         }
 
-        function showExportOptions(zipBlob) {
-            var modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.innerHTML = '<div class="whatsapp-modal"><h3>📤 Exportar Respaldo Completo</h3><p style="margin-bottom:14px;color:var(--text-secondary);font-size:0.85rem;">El archivo ZIP incluye todos los proyectos, PDFs, fotos, videos y audios.</p><p style="margin-bottom:12px;font-size:0.8rem;color:var(--text);"><strong>Tamaño:</strong> ' + (zipBlob.size / 1024 / 1024).toFixed(2) + ' MB</p><button class="btn btn-full" id="export-download-zip" style="margin-bottom:8px;">💾 Descargar y Compartir archivo ZIP</button><button class="btn btn-whatsapp btn-full" id="export-whatsapp-zip" style="margin-bottom:8px;">📱 Enviar por WhatsApp</button><button class="btn btn-secondary btn-full" id="export-cancel-zip">Cancelar</button></div>';
-            document.body.appendChild(modal);
-
-            var fileName = 'MisNotas_Respaldo_' + Date.now() + '.zip';
-
-            modal.querySelector('#export-download-zip').addEventListener('click', function() {
-                var url = URL.createObjectURL(zipBlob);
-                var a = document.createElement('a');
-                a.href = url;
-                a.download = fileName;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-
-                setTimeout(function() {
-                    if (navigator.share && navigator.canShare) {
-                        var file = new File([zipBlob], fileName, { type: 'application/zip' });
-                        if (navigator.canShare({ files: [file] })) {
-                            if (confirm('¿Quieres compartir el archivo descargado?')) {
-                                navigator.share({
-                                    title: 'Mis Notas - Respaldo',
-                                    text: 'Respaldo de Mis Notas',
-                                    files: [file]
-                                }).catch(function(err) {
-                                    console.log('Compartir cancelado o no soportado', err);
-                                });
-                            }
-                        }
-                    }
-                }, 800);
-
-                URL.revokeObjectURL(url);
-                modal.remove();
-            });
-
-            modal.querySelector('#export-whatsapp-zip').addEventListener('click', function() {
-                modal.remove();
-                showWhatsAppDialog(zipBlob, fileName);
-            });
-
-            modal.querySelector('#export-cancel-zip').addEventListener('click', function() { modal.remove(); });
-            modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
+        function downloadZipFile(zipBlob, fileName) {
+            var url = URL.createObjectURL(zipBlob); var a = document.createElement('a'); a.href = url; a.download = fileName; a.style.display = 'none';
+            document.body.appendChild(a); a.click();
+            setTimeout(function() { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
         }
 
-        function showWhatsAppDialog(blob, fileName) {
-            var savedNumber = localStorage.getItem('whatsapp_number') || '+51';
-            var modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.innerHTML = '<div class="whatsapp-modal"><h3>📱 Enviar por WhatsApp</h3><p style="margin-bottom:10px;color:var(--text-secondary);font-size:0.85rem;">Archivo: <strong>' + fileName + '</strong> (' + (blob.size / 1024 / 1024).toFixed(2) + ' MB)</p><div class="input-group"><label>Número de WhatsApp</label><input type="tel" id="whatsapp-number" placeholder="+51 999 888 777" value="' + savedNumber + '"><p class="helper-text">Código de país incluido (+51 Perú)</p></div><button class="btn btn-whatsapp btn-full" id="whatsapp-send" style="margin-bottom:8px;">📤 Enviar archivo</button><button class="btn btn-secondary btn-full" id="whatsapp-cancel">Cancelar</button></div>';
-            document.body.appendChild(modal);
-
-            var numberInput = modal.querySelector('#whatsapp-number');
-            setTimeout(function() { numberInput.focus(); if (numberInput.value === '+51') numberInput.setSelectionRange(3, 3); }, 100);
-
-            modal.querySelector('#whatsapp-cancel').addEventListener('click', function() { modal.remove(); });
-            modal.querySelector('#whatsapp-send').addEventListener('click', function() {
-                var number = numberInput.value.trim();
-                if (!number || number === '+51' || number === '+') return alert('Ingresa un número completo');
-                localStorage.setItem('whatsapp_number', number);
-                number = number.replace(/[\s\-\(\)]/g, '');
-                if (!number.startsWith('+')) number = '+' + number;
-                var message = '📋 *Mis Notas - Respaldo Completo*\n\n📅 ' + new Date().toLocaleString() + '\n📦 Incluye todos los archivos multimedia\n\n_Adjunto el archivo ZIP._';
-                var file = new File([blob], fileName, { type: 'application/zip' });
-                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                    navigator.share({ title: 'Mis Notas - Respaldo', text: message, files: [file] }).then(function() { modal.remove(); }).catch(function() {
-                        openWhatsAppFallback(number, message, blob, fileName);
-                        modal.remove();
-                    });
-                } else {
-                    openWhatsAppFallback(number, message, blob, fileName);
-                    modal.remove();
-                }
-            });
-            modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
-        }
-
-        function openWhatsAppFallback(number, message, blob, fileName) {
-            var whatsappUrl = 'https://wa.me/' + number.replace('+', '') + '?text=' + encodeURIComponent(message);
-            var win = window.open(whatsappUrl, '_blank');
-            setTimeout(function() { showWhatsAppInstructions(blob, fileName); }, 300);
-        }
-
-        function showWhatsAppInstructions(blob, fileName) {
-            var modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.innerHTML = '<div class="whatsapp-modal"><h3>📎 Cómo adjuntar en WhatsApp</h3><div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:10px;"><p style="font-weight:600;margin-bottom:4px;">Opción 1: Adjuntar manualmente</p><p style="font-size:0.8rem;color:var(--text-secondary);">1. Descarga el archivo 👇<br>2. En WhatsApp, toca 📎<br>3. Selecciona "Documento"<br>4. Busca y envía el archivo ZIP</p></div><button class="btn btn-full" id="download-zip-btn" style="margin-bottom:8px;">💾 Descargar y Compartir archivo ZIP</button><button class="btn btn-secondary btn-full" id="close-instructions">Cerrar</button></div>';
-            document.body.appendChild(modal);
-            modal.querySelector('#download-zip-btn').addEventListener('click', function() {
-                var url = URL.createObjectURL(blob);
-                var a = document.createElement('a');
-                a.href = url;
-                a.download = fileName;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                setTimeout(function() {
-                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], fileName, { type: 'application/zip' })] })) {
-                        navigator.share({ title: 'Mis Notas', files: [new File([blob], fileName, { type: 'application/zip' })] }).catch(function() {});
-                    }
-                }, 500);
-                modal.remove();
-            });
-            modal.querySelector('#close-instructions').addEventListener('click', function() { modal.remove(); });
-            modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
-        }
-
-        // ============== IMPORTACIÓN DE ZIP ==============
         async function importFullBackup(file) {
             try {
-                var progressModal = document.createElement('div');
-                progressModal.className = 'modal-overlay';
-                progressModal.innerHTML = '<div class="whatsapp-modal" style="text-align:center;"><h3>📥 Importando respaldo...</h3><div class="progress-bar"><div class="progress-bar-fill" id="import-progress"></div></div><p style="font-size:0.85rem;color:var(--text-secondary);" id="import-status">Leyendo archivo...</p></div>';
-                document.body.appendChild(progressModal);
-                var progressFill = progressModal.querySelector('#import-progress');
-                var statusText = progressModal.querySelector('#import-status');
-
-                var zip = await JSZip.loadAsync(file);
-                var dataFile = zip.file('data.json');
-                if (!dataFile) throw new Error('No se encontró data.json en el ZIP');
-
-                statusText.textContent = 'Leyendo metadatos...';
-                var jsonStr = await dataFile.async('string');
-                var importedData = JSON.parse(jsonStr);
-
-                if (!Array.isArray(importedData)) throw new Error('Formato inválido');
-
-                var totalFiles = Object.keys(zip.files).length;
-                var processed = 0;
-
-                for (var i = 0; i < importedData.length; i++) {
-                    var p = importedData[i];
-                    for (var pg in p.annotations) {
-                        for (var j = 0; j < p.annotations[pg].length; j++) {
-                            var ann = p.annotations[pg][j];
-                            if (ann.mediaFile) {
-                                statusText.textContent = 'Importando archivos... ' + Math.round((processed / totalFiles) * 100) + '%';
-                                var zipEntry = zip.file(ann.mediaFile);
-                                if (zipEntry) {
-                                    var blob = await zipEntry.async('blob');
-                                    var mediaKey = ann.mediaFile.replace('media/', '').replace(/\.[^.]+$/, '');
-                                    await saveBlob(mediaKey, blob);
-                                    ann.mediaKey = mediaKey;
-                                    ann.mediaUrl = null;
-                                    processed++;
-                                    progressFill.style.width = Math.round((processed / totalFiles) * 100) + '%';
-                                }
-                            }
-                        }
-                    }
-                }
-
-                statusText.textContent = 'Finalizando...';
-                progressFill.style.width = '100%';
-
-                if (confirm('¿Fusionar con proyectos existentes? (Cancelar = Reemplazar todo)')) {
-                    var ids = projects.map(function(p) { return p.id; });
-                    importedData.forEach(function(p) {
-                        var idx = ids.indexOf(p.id);
-                        if (idx === -1) projects.push(p);
-                        else if (p.timestamp > projects[idx].timestamp) projects[idx] = p;
-                    });
-                } else {
-                    if (!confirm('⚠️ Esto borrará todos los datos locales. ¿Continuar?')) { progressModal.remove(); return; }
-                    projects = importedData;
-                }
-
-                await saveData();
-                progressModal.remove();
-                renderProjects();
-                alert('✅ Respaldo importado con éxito');
-
-            } catch (err) {
-                document.querySelectorAll('.modal-overlay').forEach(function(m) { m.remove(); });
-                alert('Error al importar: ' + err.message);
-                console.error(err);
-            }
+                var pm = document.createElement('div'); pm.className = 'modal-overlay';
+                pm.innerHTML = '<div class="whatsapp-modal" style="text-align:center;"><h3>📥 Importando...</h3><div class="progress-bar"><div class="progress-bar-fill" id="import-progress"></div></div><p id="import-status" style="font-size:0.8rem;">Leyendo...</p></div>';
+                document.body.appendChild(pm); var pf = pm.querySelector('#import-progress'), st = pm.querySelector('#import-status');
+                var zip = await JSZip.loadAsync(file), df = zip.file('data.json'); if (!df) throw new Error('Sin data.json');
+                var js = await df.async('string'), id = JSON.parse(js); if (!Array.isArray(id)) throw new Error('Inválido');
+                var tf = Object.keys(zip.files).length, p = 0;
+                for (var i = 0; i < id.length; i++) { var pr = id[i]; for (var pg in pr.annotations) { for (var j = 0; j < pr.annotations[pg].length; j++) { var a = pr.annotations[pg][j]; if (a.mediaFile) { st.textContent = 'Archivos ' + Math.round((p / tf) * 100) + '%'; var ze = zip.file(a.mediaFile); if (ze) { var blob = await ze.async('blob'); var mk = a.mediaFile.replace('media/', '').replace(/\.[^.]+$/, ''); await saveBlob(mk, blob); a.mediaKey = mk; a.mediaUrl = null; p++; pf.style.width = Math.round((p / tf) * 100) + '%'; } } } } }
+                pf.style.width = '100%'; st.textContent = 'Finalizando...';
+                if (confirm('¿Fusionar?')) { var ex = projects.map(function(x) { return x.id; }); id.forEach(function(x) { var i = ex.indexOf(x.id); if (i === -1) projects.push(x); else if (x.timestamp > projects[i].timestamp) projects[i] = x; }); }
+                else { if (!confirm('¿Reemplazar todo?')) { pm.remove(); return; } projects = id; }
+                await saveData(); pm.remove(); renderProjects(); showToast('✅ Importado');
+            } catch (err) { document.querySelectorAll('.modal-overlay').forEach(function(m) { m.remove(); }); alert('Error: ' + err.message); }
         }
 
         function initSync() {
-            document.getElementById('btn-export').addEventListener('click', function() { exportFullBackup(); });
+            document.getElementById('btn-export').addEventListener('click', exportFullBackup);
             document.getElementById('btn-import').addEventListener('click', function() { document.getElementById('file-import').click(); });
-            document.getElementById('file-import').addEventListener('change', function(e) {
-                var file = e.target.files[0];
-                if (!file) return;
-                importFullBackup(file);
-                e.target.value = '';
-            });
+            document.getElementById('file-import').addEventListener('change', function(e) { var f = e.target.files[0]; if (!f) return; importFullBackup(f); e.target.value = ''; });
         }
 
         function initApp() {
             initTheme();
+            initPinchZoom();
             initCamera();
             initDragNote();
             initReplacement();
             initTimer();
             initSync();
             localforage.config({ name: 'MisNotasDB', storeName: 'projects_store' });
-            localforage.getItem('misnotas_projects').then(function(val) {
-                projects = val || [];
-                renderProjects();
-                restoreBlobs();
-            });
+            localforage.getItem('misnotas_projects').then(function(val) { projects = val || []; renderProjects(); restoreBlobs(); });
         }
 
         async function restoreBlobs() {
-            for (var i = 0; i < projects.length; i++)
-                for (var pg in projects[i].annotations)
-                    for (var j = 0; j < projects[i].annotations[pg].length; j++) {
-                        var ann = projects[i].annotations[pg][j];
-                        if (ann.mediaKey && !blobCache[ann.mediaKey]) {
-                            var blob = await localforage.getItem('blob_' + ann.mediaKey);
-                            if (blob) blobCache[ann.mediaKey] = blob;
-                        }
-                    }
+            for (var i = 0; i < projects.length; i++) for (var pg in projects[i].annotations) for (var j = 0; j < projects[i].annotations[pg].length; j++) { var a = projects[i].annotations[pg][j]; if (a.mediaKey && !blobCache[a.mediaKey]) { var b = await localforage.getItem('blob_' + a.mediaKey); if (b) blobCache[a.mediaKey] = b; } }
         }
 
         initApp();
