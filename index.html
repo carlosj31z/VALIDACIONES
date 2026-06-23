@@ -73,7 +73,6 @@
             -webkit-user-select: none;
         }
 
-        /* Contenedor principal centrado */
         .app-container {
             width: 100%;
             height: 100%;
@@ -114,7 +113,6 @@
             display: none !important;
         }
 
-        /* Header */
         header {
             background: var(--card);
             padding: 14px 20px;
@@ -145,7 +143,6 @@
             flex-shrink: 0;
         }
 
-        /* Botones */
         .btn {
             background: var(--primary);
             color: white;
@@ -228,7 +225,6 @@
             background: var(--bg);
         }
 
-        /* Dashboard */
         .dashboard-content {
             flex: 1;
             overflow-y: auto;
@@ -324,7 +320,6 @@
             flex-shrink: 0;
         }
 
-        /* Editor */
         .pdf-controls {
             display: flex;
             justify-content: space-between;
@@ -399,6 +394,8 @@
             text-align: left;
             margin: 0 auto;
             max-width: 100%;
+            transform-origin: 0 0;
+            transition: none;
         }
 
         canvas {
@@ -414,7 +411,7 @@
             right: 0;
             bottom: 0;
             overflow: hidden;
-            opacity: 0.2;
+            opacity: 1;
             user-select: text;
             -webkit-user-select: text;
             z-index: 25;
@@ -429,9 +426,17 @@
             line-height: 1;
         }
 
-        .textLayer ::selection {
-            background: rgba(37, 99, 235, 0.3);
-            color: transparent;
+        .textLayer ::selection,
+        .textLayer span::selection {
+            background: rgba(37, 99, 235, 0.35) !important;
+            color: #000 !important;
+            -webkit-text-fill-color: #000 !important;
+        }
+        .textLayer ::-moz-selection,
+        .textLayer span::-moz-selection {
+            background: rgba(37, 99, 235, 0.35) !important;
+            color: #000 !important;
+            -webkit-text-fill-color: #000 !important;
         }
 
         .annotation-layer-div {
@@ -444,7 +449,6 @@
             pointer-events: none;
         }
 
-        /* Pins */
         .annotation-wrapper {
             position: absolute;
             pointer-events: auto;
@@ -481,27 +485,15 @@
         }
 
         @keyframes glowPulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
-            }
-            50% {
-                box-shadow: 0 0 0 12px rgba(37, 99, 235, 0);
-            }
-            100% {
-                box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
-            }
+            0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
+            50% { box-shadow: 0 0 0 12px rgba(37, 99, 235, 0); }
+            100% { box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3); }
         }
 
         @keyframes glowReplacement {
-            0% {
-                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
-            }
-            50% {
-                box-shadow: 0 0 0 12px rgba(220, 38, 38, 0);
-            }
-            100% {
-                box-shadow: 0 3px 10px rgba(220, 38, 38, 0.3);
-            }
+            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+            50% { box-shadow: 0 0 0 12px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 3px 10px rgba(220, 38, 38, 0.3); }
         }
 
         .glow-effect {
@@ -522,7 +514,6 @@
             opacity: 0.85;
         }
 
-        /* Burbuja */
         .annotation-bubble {
             position: absolute;
             top: -5px;
@@ -542,14 +533,8 @@
         }
 
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+            from { opacity: 0; transform: translateX(-8px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         .annotation-bubble textarea {
@@ -600,32 +585,13 @@
             font-weight: 700;
         }
 
-        .badge-note {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-        .badge-photo {
-            background: #dcfce7;
-            color: #166534;
-        }
-        .badge-video {
-            background: #fef3c7;
-            color: #92400e;
-        }
-        .badge-audio {
-            background: #f3e8ff;
-            color: #6b21a8;
-        }
-        .badge-timer {
-            background: #fce7f3;
-            color: #9d174d;
-        }
-        .badge-replacement {
-            background: #fee2e2;
-            color: #991b1b;
-        }
+        .badge-note { background: #dbeafe; color: #1e40af; }
+        .badge-photo { background: #dcfce7; color: #166534; }
+        .badge-video { background: #fef3c7; color: #92400e; }
+        .badge-audio { background: #f3e8ff; color: #6b21a8; }
+        .badge-timer { background: #fce7f3; color: #9d174d; }
+        .badge-replacement { background: #fee2e2; color: #991b1b; }
 
-        /* Dock */
         .bottom-dock {
             position: fixed;
             bottom: 14px;
@@ -717,18 +683,11 @@
         }
 
         @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5);
-            }
-            70% {
-                box-shadow: 0 0 0 15px rgba(220, 38, 38, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
-            }
+            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5); }
+            70% { box-shadow: 0 0 0 15px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
         }
 
-        /* Modales */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -843,7 +802,6 @@
             width: 0%;
         }
 
-        /* Fullscreen */
         .fullscreen-overlay {
             position: fixed;
             top: 0;
@@ -885,7 +843,6 @@
             z-index: 10000;
         }
 
-        /* Video recorder */
         .video-recorder {
             position: fixed;
             top: 0;
@@ -968,7 +925,6 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Dashboard -->
         <div id="view-dashboard" class="view">
             <header>
                 <h1>📋 Mis Notas</h1>
@@ -992,7 +948,6 @@
             </div>
         </div>
 
-        <!-- Editor -->
         <div id="view-editor" class="view hidden">
             <header>
                 <button class="btn btn-secondary" id="btn-back-dashboard">← Panel</button>
@@ -1056,7 +1011,6 @@
         <input type="file" id="file-import" accept=".zip,application/zip">
     </div>
 
-    <!-- Timer Modal -->
     <div id="timer-modal" class="modal-overlay hidden">
         <div class="timer-modal">
             <h3 style="color:var(--text-secondary);">⏱️ Cronómetro</h3>
@@ -1081,6 +1035,11 @@
         var pdfScale = 1.0;
         var blobCache = {};
 
+        // Variables para el desplazamiento táctil del PDF
+        var pdfPanX = 0, pdfPanY = 0;
+        var isPanning = false;
+        var lastPanPoint = { x: 0, y: 0 };
+
         function initTheme() {
             var themes = ['light', 'dark', 'pink'];
             var icons = ['🌙', '🌸', '☀️'];
@@ -1092,8 +1051,10 @@
                 if (t === 'dark') document.body.classList.add('sap-dark');
                 if (t === 'pink') document.body.classList.add('sap-pink');
                 var i = themes.indexOf(t);
-                document.getElementById('btn-theme-dash').textContent = icons[i];
-                document.getElementById('btn-theme-edit').textContent = icons[i];
+                var dashBtn = document.getElementById('btn-theme-dash');
+                var editBtn = document.getElementById('btn-theme-edit');
+                if (dashBtn) dashBtn.textContent = icons[i];
+                if (editBtn) editBtn.textContent = icons[i];
             }
             apply(current);
             var toggle = function() {
@@ -1134,6 +1095,7 @@
 
         function renderProjects() {
             var container = document.getElementById('project-list-container');
+            if (!container) return;
             container.innerHTML = '';
             projects.sort(function(a, b) { return b.timestamp - a.timestamp; });
             if (projects.length === 0) {
@@ -1146,7 +1108,7 @@
                 var card = document.createElement('div');
                 card.className = 'project-card';
                 card.innerHTML = '<div class="project-card-header">' +
-                    '<span class="project-name">📄 ' + p.name + '</span>' +
+                    '<span class="project-name">📄 ' + (p.name || 'Sin nombre') + '</span>' +
                     '<div class="project-actions">' +
                     '<button class="btn-sm" data-edit="' + p.id + '">✏️</button>' +
                     '<button class="btn-sm" data-delete="' + p.id + '" style="color:var(--danger)">🗑️</button>' +
@@ -1157,8 +1119,7 @@
                 card.querySelector('[data-edit]').addEventListener('click', function(e) {
                     e.stopPropagation();
                     var n = prompt('Renombrar:', p.name);
-                    if (n && n.trim()) { p.name = n.trim();
-                        saveData().then(renderProjects); }
+                    if (n && n.trim()) { p.name = n.trim(); saveData().then(renderProjects); }
                 });
                 card.querySelector('[data-delete]').addEventListener('click', async function(e) {
                     e.stopPropagation();
@@ -1184,10 +1145,14 @@
 
         function openProject(id) {
             currentProject = projects.find(function(p) { return p.id === id; });
+            if (!currentProject) return;
             document.getElementById('editor-project-title').textContent = '📄 ' + currentProject.name;
             pdfDoc = null;
             currentPageNum = 1;
             pdfScale = 1.0;
+            pdfPanX = 0; pdfPanY = 0;
+            var pdfContainer = document.getElementById('pdf-container');
+            if (pdfContainer) pdfContainer.style.transform = '';
             document.getElementById('pdf-container').style.display = 'none';
             document.getElementById('annotation-layer').innerHTML = '';
             document.getElementById('pdf-text-layer').innerHTML = '';
@@ -1207,6 +1172,7 @@
             if (!f) return;
             var r = new FileReader();
             r.onload = function() {
+                if (!currentProject) return;
                 currentProject.pdfData = r.result;
                 saveData().then(function() {
                     document.getElementById('pdf-upload-loader').style.display = 'none';
@@ -1218,7 +1184,9 @@
         });
 
         function loadPDF(b64) {
-            var d = atob(b64.split(',')[1]);
+            var parts = b64.split(',');
+            if (parts.length < 2) return;
+            var d = atob(parts[1]);
             var bytes = new Uint8Array(d.length);
             for (var i = 0; i < d.length; i++) bytes[i] = d.charCodeAt(i);
             pdfjsLib.getDocument({ data: bytes }).promise.then(function(pdf) {
@@ -1230,6 +1198,8 @@
                 pdfScale = Math.min(w / page.getViewport({ scale: 1 }).width, 2.5);
                 updateZoomLevel();
                 renderPage(1);
+            }).catch(function(err) {
+                console.error('Error al cargar PDF:', err);
             });
         }
 
@@ -1258,62 +1228,134 @@
                         document.getElementById('pdf-current-page').textContent = num;
                         renderAnnotations();
                     });
+            }).catch(function(err) {
+                console.error('Error al renderizar página:', err);
+                pageIsRendering = false;
             });
         }
 
         function updateZoomLevel() { document.getElementById('zoom-level').textContent = Math.round(pdfScale * 100) + '%'; }
 
-        document.getElementById('btn-zoom-in').addEventListener('click', function() { if (pdfDoc && !pageIsRendering) { pdfScale = Math.min(4,
-                pdfScale + 0.25);
+        document.getElementById('btn-zoom-in').addEventListener('click', function() {
+            if (pdfDoc && !pageIsRendering) {
+                pdfScale = Math.min(4, pdfScale + 0.25);
                 updateZoomLevel();
-                renderPage(currentPageNum); } });
-        document.getElementById('btn-zoom-out').addEventListener('click', function() { if (pdfDoc && !pageIsRendering && pdfScale > 0.5) { pdfScale =
-                Math.max(0.5, pdfScale - 0.25);
+                renderPage(currentPageNum);
+            }
+        });
+        document.getElementById('btn-zoom-out').addEventListener('click', function() {
+            if (pdfDoc && !pageIsRendering && pdfScale > 0.5) {
+                pdfScale = Math.max(0.5, pdfScale - 0.25);
                 updateZoomLevel();
-                renderPage(currentPageNum); } });
-        document.getElementById('pdf-prev').addEventListener('click', function() { if (currentPageNum > 1 && !pageIsRendering) { currentPageNum--;
-                renderPage(currentPageNum); } });
-        document.getElementById('pdf-next').addEventListener('click', function() { if (pdfDoc && currentPageNum < pdfDoc.numPages && !
-                pageIsRendering) { currentPageNum++;
-                renderPage(currentPageNum); } });
+                renderPage(currentPageNum);
+            }
+        });
+        document.getElementById('pdf-prev').addEventListener('click', function() {
+            if (currentPageNum > 1 && !pageIsRendering) { currentPageNum--; renderPage(currentPageNum); }
+        });
+        document.getElementById('pdf-next').addEventListener('click', function() {
+            if (pdfDoc && currentPageNum < pdfDoc.numPages && !pageIsRendering) { currentPageNum++; renderPage(currentPageNum); }
+        });
 
         document.addEventListener('keydown', function(e) {
             if (document.getElementById('view-editor').classList.contains('hidden')) return;
-            if ((e.key === 'ArrowLeft') && currentPageNum > 1 && !pageIsRendering) { currentPageNum--;
-                renderPage(currentPageNum); } else if ((e.key === 'ArrowRight') && pdfDoc && currentPageNum < pdfDoc.numPages && !
-                pageIsRendering) { currentPageNum++;
-                renderPage(currentPageNum); }
+            if ((e.key === 'ArrowLeft') && currentPageNum > 1 && !pageIsRendering) { currentPageNum--; renderPage(currentPageNum); }
+            else if ((e.key === 'ArrowRight') && pdfDoc && currentPageNum < pdfDoc.numPages && !pageIsRendering) { currentPageNum++; renderPage(currentPageNum); }
         });
 
+        // ===== SISTEMA DE ZOOM Y DESPLAZAMIENTO TÁCTIL =====
         var mainEl = document.getElementById('editor-main-container');
-        var startDist = 0,
-            startScale = 1;
-        mainEl.addEventListener('touchstart', function(e) {
-            if (e.touches.length === 2 && pdfDoc && !pageIsRendering) { startDist = Math.hypot(e.touches[0].clientX - e.touches[1]
-                    .clientX, e.touches[0].clientY - e.touches[1].clientY);
-                startScale = pdfScale;
-                document.getElementById('pdf-container').style.transition = 'none'; }
-        });
-        mainEl.addEventListener('touchmove', function(e) {
-            if (e.touches.length === 2 && startDist && pdfDoc && !pageIsRendering) { if (e.cancelable) e.preventDefault(); var d = Math
-                    .hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); var s = startScale *
-                    (d / startDist); if (s >= 0.4 && s <= 4) document.getElementById('pdf-container').style.transform = 'scale(' + (s /
-                    pdfScale) + ')'; }
-        });
-        mainEl.addEventListener('touchend', function() { if (startDist && pdfDoc && !pageIsRendering) { document.getElementById(
-                    'pdf-container').style.transform = 'none';
-                renderPage(currentPageNum);
-                startDist = 0;
-                updateZoomLevel(); } });
+        var pdfContainer = document.getElementById('pdf-container');
+        var initialPinchDistance = 0;
+        var initialScale = 1;
+        var lastTapTime = 0;
 
-        mainEl.addEventListener('wheel', function(e) { if (e.ctrlKey && pdfDoc && !pageIsRendering) { e.preventDefault();
+        mainEl.addEventListener('touchstart', function(e) {
+            if (!pdfDoc || pageIsRendering) return;
+
+            if (e.touches.length === 1) {
+                isPanning = true;
+                lastPanPoint = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                var now = Date.now();
+                if (now - lastTapTime < 300) {
+                    if (pdfScale < 2) {
+                        pdfScale = Math.min(4, pdfScale * 1.8);
+                    } else {
+                        pdfScale = Math.max(0.5, pdfScale / 1.8);
+                    }
+                    updateZoomLevel();
+                    renderPage(currentPageNum);
+                    isPanning = false;
+                    e.preventDefault();
+                }
+                lastTapTime = now;
+            } else if (e.touches.length === 2) {
+                isPanning = false;
+                initialPinchDistance = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                initialScale = pdfScale;
+                pdfContainer.style.transition = 'none';
+            }
+        }, { passive: false });
+
+        mainEl.addEventListener('touchmove', function(e) {
+            if (!pdfDoc || pageIsRendering) return;
+
+            if (e.touches.length === 2 && initialPinchDistance > 0) {
+                if (e.cancelable) e.preventDefault();
+                var currentDistance = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                var newScale = initialScale * (currentDistance / initialPinchDistance);
+                newScale = Math.max(0.4, Math.min(4, newScale));
+                pdfContainer.style.transform = 'scale(' + newScale / pdfScale + ')';
+            } else if (e.touches.length === 1 && isPanning && pdfScale > 1.0) {
+                if (e.cancelable) e.preventDefault();
+                var deltaX = e.touches[0].clientX - lastPanPoint.x;
+                var deltaY = e.touches[0].clientY - lastPanPoint.y;
+                pdfPanX += deltaX;
+                pdfPanY += deltaY;
+                pdfContainer.style.transform = 'translate(' + pdfPanX + 'px,' + pdfPanY + 'px) scale(' + pdfScale + ')';
+                lastPanPoint = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }
+        }, { passive: false });
+
+        mainEl.addEventListener('touchend', function(e) {
+            if (!pdfDoc) return;
+
+            if (initialPinchDistance > 0) {
+                var match = pdfContainer.style.transform.match(/scale\(([^)]+)\)/);
+                if (match) {
+                    pdfScale = Math.max(0.4, Math.min(4, parseFloat(match[1]) * pdfScale));
+                }
+                updateZoomLevel();
+                pdfPanX = 0; pdfPanY = 0;
+                pdfContainer.style.transform = '';
+                renderPage(currentPageNum);
+            }
+
+            initialPinchDistance = 0;
+            if (e.touches.length === 0) {
+                isPanning = false;
+            }
+        });
+
+        mainEl.addEventListener('wheel', function(e) {
+            if (e.ctrlKey && pdfDoc && !pageIsRendering) {
+                e.preventDefault();
                 pdfScale += e.deltaY * -0.005;
                 pdfScale = Math.max(0.5, Math.min(4, pdfScale));
                 updateZoomLevel();
-                renderPage(currentPageNum); } }, { passive: false });
+                pdfPanX = 0; pdfPanY = 0;
+                pdfContainer.style.transform = '';
+                renderPage(currentPageNum);
+            }
+        }, { passive: false });
 
-        document.getElementById('btn-save-exit').addEventListener('click', function() { saveData().then(function() { showView(
-                    'dashboard'); }); });
+        document.getElementById('btn-save-exit').addEventListener('click', function() { saveData().then(function() { showView('dashboard'); }); });
         document.getElementById('btn-back-dashboard').addEventListener('click', function() { showView('dashboard'); });
 
         window.openFullscreenImage = function(src) {
@@ -1331,52 +1373,25 @@
                 ps = 1;
 
             function up() { img.style.transform = 'translate(' + px + 'px,' + py + 'px) scale(' + sc + ')'; }
-            ov.addEventListener('touchstart', function(e) { if (e.touches.length === 2) { pd = Math.hypot(e.touches[0].clientX - e
-                        .touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-                    ps = sc; } else if (e.touches.length === 1 && sc > 1) { pan = true;
-                    sp.x = e.touches[0].clientX - px;
-                    sp.y = e.touches[0].clientY - py; } });
-            ov.addEventListener('touchmove', function(e) { if (e.touches.length === 2 && pd > 0) { e.preventDefault(); var d = Math
-                        .hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-                    sc = Math.max(1, Math.min(ps * (d / pd), 5));
-                    up(); } else if (e.touches.length === 1 && pan) { e.preventDefault();
-                    px = e.touches[0].clientX - sp.x;
-                    py = e.touches[0].clientY - sp.y;
-                    up(); } }, { passive: false });
-            ov.addEventListener('touchend', function() { pd = 0;
-                pan = false; });
-            ov.addEventListener('wheel', function(e) { e.preventDefault();
-                sc += e.deltaY * -0.005;
-                sc = Math.max(1, Math.min(sc, 5));
-                up(); }, { passive: false });
-            img.addEventListener('mousedown', function(e) { if (sc > 1) { pan = true;
-                    sp.x = e.clientX - px;
-                    sp.y = e.clientY - py; } });
-            window.addEventListener('mousemove', function(e) { if (pan) { px = e.clientX - sp.x;
-                    py = e.clientY - sp.y;
-                    up(); } });
+            ov.addEventListener('touchstart', function(e) { if (e.touches.length === 2) { pd = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); ps = sc; } else if (e.touches.length === 1 && sc > 1) { pan = true; sp.x = e.touches[0].clientX - px; sp.y = e.touches[0].clientY - py; } });
+            ov.addEventListener('touchmove', function(e) { if (e.touches.length === 2 && pd > 0) { e.preventDefault(); var d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); sc = Math.max(1, Math.min(ps * (d / pd), 5)); up(); } else if (e.touches.length === 1 && pan) { e.preventDefault(); px = e.touches[0].clientX - sp.x; py = e.touches[0].clientY - sp.y; up(); } }, { passive: false });
+            ov.addEventListener('touchend', function() { pd = 0; pan = false; });
+            ov.addEventListener('wheel', function(e) { e.preventDefault(); sc += e.deltaY * -0.005; sc = Math.max(1, Math.min(sc, 5)); up(); }, { passive: false });
+            img.addEventListener('mousedown', function(e) { if (sc > 1) { pan = true; sp.x = e.clientX - px; sp.y = e.clientY - py; } });
+            window.addEventListener('mousemove', function(e) { if (pan) { px = e.clientX - sp.x; py = e.clientY - sp.y; up(); } });
             window.addEventListener('mouseup', function() { pan = false; });
-            ov.querySelector('.fullscreen-close').addEventListener('click', function() { ov.classList.remove('show');
-                setTimeout(function() { ov.remove(); }, 300); });
-            ov.addEventListener('click', function(e) { if (e.target === ov) { ov.classList.remove('show');
-                    setTimeout(function() { ov.remove(); }, 300); } });
+            ov.querySelector('.fullscreen-close').addEventListener('click', function() { ov.classList.remove('show'); setTimeout(function() { ov.remove(); }, 300); });
+            ov.addEventListener('click', function(e) { if (e.target === ov) { ov.classList.remove('show'); setTimeout(function() { ov.remove(); }, 300); } });
             requestAnimationFrame(function() { ov.classList.add('show'); });
         };
 
         function initCamera() {
-            document.getElementById('btn-dock-camera').addEventListener('click', function() { if (!pdfDoc) return alert(
-                    'Carga un PDF primero'); if (confirm('¿Grabar video? (Cancelar = Foto)')) { recordVideo(); } else { document
-                        .getElementById('file-camera').click(); } });
-            document.getElementById('file-camera').addEventListener('change', async function(e) { var f = e.target.files[0]; if (!f)
-                    return; var isV = f.type.startsWith('video/'); var key = 'media_' + Date.now() + '_' + Math.random().toString(
-                        36).substr(2, 9);
-                await saveBlob(key, f);
-                addAnnotation(45, 40, '', isV ? 'video' : 'photo', URL.createObjectURL(f), key); });
+            document.getElementById('btn-dock-camera').addEventListener('click', function() { if (!pdfDoc) return alert('Carga un PDF primero'); if (confirm('¿Grabar video? (Cancelar = Foto)')) { recordVideo(); } else { document.getElementById('file-camera').click(); } });
+            document.getElementById('file-camera').addEventListener('change', async function(e) { var f = e.target.files[0]; if (!f) return; var isV = f.type.startsWith('video/'); var key = 'media_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); await saveBlob(key, f); addAnnotation(45, 40, '', isV ? 'video' : 'photo', URL.createObjectURL(f), key); });
         }
 
         function recordVideo() {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { alert('No soportado.');
-                document.getElementById('file-camera').click(); return; }
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { alert('No soportado.'); document.getElementById('file-camera').click(); return; }
             var modal = document.createElement('div');
             modal.className = 'video-recorder';
             modal.innerHTML = '<video autoplay muted playsinline></video><div class="recorder-bar"><div class="rec-circle" id="rec-start">⏺</div><span class="rec-timer" id="rec-timer">00:00</span><div class="rec-circle" id="rec-stop" style="display:none">⏹</div><div class="rec-circle" id="rec-close">✕</div></div>';
@@ -1388,58 +1403,79 @@
                 te = modal.querySelector('#rec-timer'),
                 rec, chunks = [],
                 stream, timer, secs = 0;
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: true }).then(function(s) { stream =
-                    s;
+            
+            function cleanup() { 
+                clearInterval(timer); 
+                if (stream) stream.getTracks().forEach(function(t) { t.stop(); }); 
+                modal.remove(); 
+            }
+
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: true }).then(function(s) { 
+                stream = s;
                 video.srcObject = s;
-                bs.addEventListener('click', function() { chunks = [];
+                bs.addEventListener('click', function() { 
+                    chunks = [];
                     rec = new MediaRecorder(s);
                     rec.ondataavailable = function(e) { if (e.data.size > 0) chunks.push(e.data); };
-                    rec.onstop = async function() { var blob = new Blob(chunks, { type: 'video/webm' }); var key =
-                            'media_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); await saveBlob(key,
-                            blob);
+                    rec.onstop = async function() { 
+                        var blob = new Blob(chunks, { type: 'video/webm' }); 
+                        var key = 'media_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); 
+                        await saveBlob(key, blob);
                         addAnnotation(45, 40, '', 'video', URL.createObjectURL(blob), key);
-                        cleanup(); };
+                        cleanup(); 
+                    };
                     rec.start();
                     bs.style.display = 'none';
                     bp.style.display = 'flex';
                     secs = 0;
-                    timer = setInterval(function() { secs++;
-                        te.textContent = String(Math.floor(secs / 60)).padStart(2, '0') + ':' + String(secs % 60)
-                            .padStart(2, '0'); }, 1000); });
-                bp.addEventListener('click', function() { if (rec && rec.state === 'recording') rec.stop(); if (stream) stream
-                        .getTracks().forEach(function(t) { t.stop(); }); });
-                function cleanup() { clearInterval(timer); if (stream) stream.getTracks().forEach(function(t) { t.stop(); });
-                    modal.remove(); }
-                bc.addEventListener('click', function() { if (rec && rec.state === 'recording') { if (confirm('¿Salir sin guardar?')) { rec
-                            .stop();
-                        cleanup(); } } else { cleanup(); } });
-            }).catch(function() { alert('Error de cámara.');
+                    timer = setInterval(function() { 
+                        secs++;
+                        te.textContent = String(Math.floor(secs / 60)).padStart(2, '0') + ':' + String(secs % 60).padStart(2, '0'); 
+                    }, 1000); 
+                });
+                bp.addEventListener('click', function() { 
+                    if (rec && rec.state === 'recording') rec.stop(); 
+                });
+                bc.addEventListener('click', function() { 
+                    if (rec && rec.state === 'recording') { 
+                        rec.stop();
+                    } else { 
+                        cleanup(); 
+                    } 
+                });
+            }).catch(function() { 
+                alert('Error de cámara.');
                 modal.remove();
-                document.getElementById('file-camera').click(); });
+                document.getElementById('file-camera').click(); 
+            });
         }
 
-        function addAnnotation(x, y, text, type, url, key, applyOffset) { if (applyOffset === undefined) applyOffset = true;
-            text = text || ''; if (applyOffset && type !== 'replacement') { x += (Math.random() * 10) - 5;
-                y += (Math.random() * 10) - 5; } else if (applyOffset && type === 'replacement') { x += (Math.random() * 4) - 2;
-                y += -3; }
+        function addAnnotation(x, y, text, type, url, key, applyOffset) {
+            if (applyOffset === undefined) applyOffset = true;
+            text = text || '';
+            if (applyOffset && type !== 'replacement') { x += (Math.random() * 10) - 5; y += (Math.random() * 10) - 5; }
+            else if (applyOffset && type === 'replacement') { x += (Math.random() * 4) - 2; y += -3; }
             x = Math.max(2, Math.min(95, x));
-            y = Math.max(2, Math.min(95, y)); var ann = { id: 'a_' + Date.now(), x: x, y: y, text: text, type: type, mediaUrl: url || null,
-                mediaKey: key || null }; if (!currentProject.annotations[currentPageNum]) currentProject.annotations[
-                currentPageNum] = [];
+            y = Math.max(2, Math.min(95, y));
+            var ann = { id: 'a_' + Date.now(), x: x, y: y, text: text, type: type, mediaUrl: url || null, mediaKey: key || null };
+            if (!currentProject.annotations[currentPageNum]) currentProject.annotations[currentPageNum] = [];
             currentProject.annotations[currentPageNum].push(ann);
             drawAnnotation(ann, true, applyOffset);
-            saveData(); }
+            saveData();
+        }
 
-        function addReplacement(rects, original, applyOffset) { if (applyOffset === undefined) applyOffset = true; var x = rects[0].x,
-                y = rects[0].y - 4; if (applyOffset) { x += (Math.random() * 4) - 2;
-                y -= 2; }
+        function addReplacement(rects, original, applyOffset) {
+            if (applyOffset === undefined) applyOffset = true;
+            var x = rects[0].x, y = rects[0].y - 4;
+            if (applyOffset) { x += (Math.random() * 4) - 2; y -= 2; }
             x = Math.max(2, Math.min(95, x));
-            y = Math.max(2, Math.min(95, y)); var ann = { id: 'a_' + Date.now(), x: x, y: y, rects: rects, originalText: original, text: '',
-                type: 'replacement' }; if (!currentProject.annotations[currentPageNum]) currentProject.annotations[
-                currentPageNum] = [];
+            y = Math.max(2, Math.min(95, y));
+            var ann = { id: 'a_' + Date.now(), x: x, y: y, rects: rects, originalText: original, text: '', type: 'replacement' };
+            if (!currentProject.annotations[currentPageNum]) currentProject.annotations[currentPageNum] = [];
             currentProject.annotations[currentPageNum].push(ann);
             drawAnnotation(ann, true, applyOffset);
-            saveData(); }
+            saveData();
+        }
 
         async function drawAnnotation(ann, autoExpand, glow) {
             var wrap = document.createElement('div');
@@ -1456,12 +1492,7 @@
             else if (ann.type === 'replacement') symbol = '✂️';
             var pinClass = 'annotation-pin' + (ann.type === 'replacement' ? ' pin-replacement' : '');
             if (glow) pinClass += ' glow-effect';
-            if (ann.type === 'replacement' && ann.rects) { ann.rects.forEach(function(r) { var s = document.createElement('div');
-                    s.className = 'strike-overlay strike-' + ann.id;
-                    s.style.left = r.x + '%';
-                    s.style.top = (r.y + r.h / 2) + '%';
-                    s.style.width = r.w + '%';
-                    document.getElementById('annotation-layer').appendChild(s); }); }
+            if (ann.type === 'replacement' && ann.rects) { ann.rects.forEach(function(r) { var s = document.createElement('div'); s.className = 'strike-overlay strike-' + ann.id; s.style.left = r.x + '%'; s.style.top = (r.y + r.h / 2) + '%'; s.style.width = r.w + '%'; document.getElementById('annotation-layer').appendChild(s); }); }
             var displayUrl = ann.mediaUrl;
             if (ann.mediaKey && !displayUrl) { var blob = await getBlob(ann.mediaKey); if (blob) displayUrl = URL.createObjectURL(blob); }
             var badgeType = 'badge-note';
@@ -1472,44 +1503,34 @@
             else if (ann.type === 'replacement') badgeType = 'badge-replacement';
             var bubbleClass = 'annotation-bubble' + (autoExpand ? '' : ' hidden');
             if (ann.type === 'replacement') bubbleClass += ' bubble-replacement';
-            var html = '<div class="' + pinClass + '"><span>' + symbol + '</span></div><div class="' + bubbleClass +
-                '" id="bubble-' + ann.id + '" onclick="event.stopPropagation()"><div class="bubble-header"><span class="bubble-type-badge ' +
-                badgeType + '">' + ann.type.toUpperCase() + '</span><span style="font-size:0.7rem;">#' + idx + '</span></div>';
-            if (ann.type === 'text') { html += '<textarea id="ta-' + ann.id + '" placeholder="Escribe tu nota...">' + ann.text +
-                    '</textarea>'; } else if (ann.type === 'replacement') { html +=
-                    '<div style="background:var(--bg);padding:8px;border-radius:6px;margin-bottom:4px;font-size:0.8rem;"><span style="color:var(--danger);text-decoration:line-through;">' +
-                    ann.originalText + '</span></div><textarea id="ta-' + ann.id + '" placeholder="Texto de reemplazo...">' + ann
-                    .text + '</textarea>'; } else if (ann.type === 'photo') { html += '<img src="' + displayUrl +
-                    '" onclick="window.openFullscreenImage(this.src)" loading="lazy"><textarea id="ta-' + ann.id +
-                    '" placeholder="Nota de la foto...">' + ann.text + '</textarea>'; } else if (ann.type === 'video') { html +=
-                    '<video controls playsinline src="' + displayUrl +
-                    '" preload="metadata"></video><textarea id="ta-' + ann.id + '" placeholder="Nota del video...">' + ann.text +
-                    '</textarea>'; } else if (ann.type === 'audio') { html += '<audio controls src="' + displayUrl +
-                    '" style="width:100%;margin-bottom:4px;"></audio><textarea id="ta-' + ann.id +
-                    '" placeholder="Nota del audio...">' + ann.text + '</textarea>'; } else if (ann.type === 'timer') { html +=
-                    '<div class="time-badge">⏱️ ' + (ann.mediaUrl || '00:00.00') + '</div><textarea id="ta-' + ann.id +
-                    '" placeholder="Nota del tiempo...">' + ann.text + '</textarea>'; }
-            html += '<button class="btn-sm" style="color:var(--danger);align-self:flex-end;margin-top:4px;" id="del-' + ann.id +
-                '">🗑️ Eliminar</button></div>';
+            var html = '<div class="' + pinClass + '"><span>' + symbol + '</span></div><div class="' + bubbleClass + '" id="bubble-' + ann.id + '" onclick="event.stopPropagation()"><div class="bubble-header"><span class="bubble-type-badge ' + badgeType + '">' + ann.type.toUpperCase() + '</span><span style="font-size:0.7rem;">#' + idx + '</span></div>';
+            if (ann.type === 'text') { html += '<textarea id="ta-' + ann.id + '" placeholder="Escribe tu nota...">' + (ann.text || '') + '</textarea>'; }
+            else if (ann.type === 'replacement') { html += '<div style="background:var(--bg);padding:8px;border-radius:6px;margin-bottom:4px;font-size:0.8rem;"><span style="color:var(--danger);text-decoration:line-through;">' + (ann.originalText || '') + '</span></div><textarea id="ta-' + ann.id + '" placeholder="Texto de reemplazo...">' + (ann.text || '') + '</textarea>'; }
+            else if (ann.type === 'photo') { html += '<img src="' + displayUrl + '" onclick="window.openFullscreenImage(this.src)" loading="lazy"><textarea id="ta-' + ann.id + '" placeholder="Nota de la foto...">' + (ann.text || '') + '</textarea>'; }
+            else if (ann.type === 'video') { html += '<video controls playsinline src="' + displayUrl + '" preload="metadata"></video><textarea id="ta-' + ann.id + '" placeholder="Nota del video...">' + (ann.text || '') + '</textarea>'; }
+            else if (ann.type === 'audio') { html += '<audio controls src="' + displayUrl + '" style="width:100%;margin-bottom:4px;"></audio><textarea id="ta-' + ann.id + '" placeholder="Nota del audio...">' + (ann.text || '') + '</textarea>'; }
+            else if (ann.type === 'timer') { html += '<div class="time-badge">⏱️ ' + (ann.mediaUrl || '00:00.00') + '</div><textarea id="ta-' + ann.id + '" placeholder="Nota del tiempo...">' + (ann.text || '') + '</textarea>'; }
+            html += '<button class="btn-sm" style="color:var(--danger);align-self:flex-end;margin-top:4px;" id="del-' + ann.id + '">🗑️ Eliminar</button></div>';
             wrap.innerHTML = html;
             document.getElementById('annotation-layer').appendChild(wrap);
-            if (glow) { var pin = wrap.querySelector('.annotation-pin'); if (pin) pin.addEventListener('animationend', function() { pin
-                        .classList.remove('glow-effect'); }); }
+            if (glow) { var pin = wrap.querySelector('.annotation-pin'); if (pin) pin.addEventListener('animationend', function() { pin.classList.remove('glow-effect'); }); }
             document.getElementById('del-' + ann.id).addEventListener('click', function() { deleteAnnotation(ann.id); });
             makeDraggable(wrap, ann);
             var ta = document.getElementById('ta-' + ann.id);
-            if (ta) ta.addEventListener('input', function() { ann.text = ta.value;
-                saveData(); });
+            if (ta) ta.addEventListener('input', function() { ann.text = ta.value; saveData(); });
         }
 
-        function makeDraggable(wrap, ann) { var pin = wrap.querySelector('.annotation-pin'),
+        function makeDraggable(wrap, ann) {
+            var pin = wrap.querySelector('.annotation-pin'),
                 dragging = false,
                 wasDragged = false,
                 sx, sy;
 
-            function start(e) { if (e.target.closest('.annotation-bubble')) return;
+            function start(e) {
+                if (e.target.closest('.annotation-bubble')) return;
                 dragging = true;
-                wasDragged = false; var cx = e.touches ? e.touches[0].clientX : e.clientX,
+                wasDragged = false;
+                var cx = e.touches ? e.touches[0].clientX : e.clientX,
                     cy = e.touches ? e.touches[0].clientY : e.clientY,
                     r = wrap.getBoundingClientRect();
                 sx = cx - r.left;
@@ -1517,10 +1538,14 @@
                 document.addEventListener('mousemove', move);
                 document.addEventListener('mouseup', end);
                 document.addEventListener('touchmove', move, { passive: false });
-                document.addEventListener('touchend', end); }
+                document.addEventListener('touchend', end);
+            }
 
-            function move(e) { if (!dragging) return;
-                wasDragged = true; if (e.cancelable) e.preventDefault(); var cx = e.touches ? e.touches[0].clientX : e.clientX,
+            function move(e) {
+                if (!dragging) return;
+                wasDragged = true;
+                if (e.cancelable) e.preventDefault();
+                var cx = e.touches ? e.touches[0].clientX : e.clientX,
                     cy = e.touches ? e.touches[0].clientY : e.clientY,
                     cr = document.getElementById('pdf-container').getBoundingClientRect(),
                     xp = ((cx - cr.left - sx) / cr.width) * 100,
@@ -1530,154 +1555,201 @@
                 wrap.style.left = xp + '%';
                 wrap.style.top = yp + '%';
                 ann.x = xp;
-                ann.y = yp; }
+                ann.y = yp;
+            }
 
-            function end() { dragging = false;
+            function end() {
+                dragging = false;
                 saveData();
                 document.removeEventListener('mousemove', move);
                 document.removeEventListener('mouseup', end);
                 document.removeEventListener('touchmove', move);
-                document.removeEventListener('touchend', end); }
+                document.removeEventListener('touchend', end);
+            }
             pin.addEventListener('mousedown', start);
             pin.addEventListener('touchstart', start, { passive: false });
-            pin.addEventListener('click', function(e) { e.stopPropagation(); if (wasDragged) return; var b = document.getElementById(
-                    'bubble-' + ann.id),
+            pin.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (wasDragged) return;
+                var b = document.getElementById('bubble-' + ann.id),
                     hidden = b.classList.contains('hidden');
-                closeAllBubbles(); if (hidden) b.classList.remove('hidden'); }); }
+                closeAllBubbles();
+                if (hidden) b.classList.remove('hidden');
+            });
+        }
 
         function closeAllBubbles() { document.querySelectorAll('.annotation-bubble').forEach(function(b) { b.classList.add('hidden'); }); }
-        async function deleteAnnotation(id) { if (!confirm('¿Eliminar?')) return; var anns = currentProject.annotations[
-            currentPageNum] || []; var ann = anns.find(function(a) { return a.id === id; }); if (ann && ann.mediaKey) await deleteBlob(
-                ann.mediaKey);
-            currentProject.annotations[currentPageNum] = anns.filter(function(a) { return a.id !== id; }); var wrap = document
-                .getElementById('wrap-' + id); if (wrap) wrap.remove();
+        async function deleteAnnotation(id) {
+            if (!confirm('¿Eliminar?')) return;
+            var anns = currentProject.annotations[currentPageNum] || [];
+            var ann = anns.find(function(a) { return a.id === id; });
+            if (ann && ann.mediaKey) await deleteBlob(ann.mediaKey);
+            currentProject.annotations[currentPageNum] = anns.filter(function(a) { return a.id !== id; });
+            var wrap = document.getElementById('wrap-' + id);
+            if (wrap) wrap.remove();
             document.querySelectorAll('.strike-' + id).forEach(function(s) { s.remove(); });
-            saveData(); }
+            saveData();
+        }
 
-        function renderAnnotations() { document.getElementById('annotation-layer').innerHTML = ''; var anns = currentProject.annotations[
-                currentPageNum] || [];
-            anns.forEach(function(a) { drawAnnotation(a, false, false); }); }
+        function renderAnnotations() {
+            document.getElementById('annotation-layer').innerHTML = '';
+            var anns = currentProject.annotations[currentPageNum] || [];
+            anns.forEach(function(a) { drawAnnotation(a, false, false); });
+        }
 
-        function initDragNote() { var btn = document.getElementById('btn-dock-note');
+        function initDragNote() {
+            var btn = document.getElementById('btn-dock-note');
             btn.addEventListener('mousedown', function(e) { startDragNote(e); });
-            btn.addEventListener('touchstart', function(e) { startDragNote(e); }, { passive: false }); }
+            btn.addEventListener('touchstart', function(e) { startDragNote(e); }, { passive: false });
+        }
 
-        function startDragNote(e) { if (!pdfDoc) return alert('Carga un PDF primero'); var ghost = document.createElement('div');
+        function startDragNote(e) {
+            if (!pdfDoc) return alert('Carga un PDF primero');
+            var ghost = document.createElement('div');
             ghost.className = 'annotation-pin';
             ghost.style.cssText = 'position:fixed;z-index:9999;pointer-events:none;';
             ghost.innerHTML = '<span>📝</span>';
             document.body.appendChild(ghost);
 
-            function move(ev) { var cx = ev.touches ? ev.touches[0].clientX : ev.clientX,
-                    cy = ev.touches ? ev.touches[0].clientY : ev.clientY;
-                ghost.style.left = (cx - 15) + 'px';
-                ghost.style.top = (cy - 15) + 'px'; }
+            function move(ev) { var cx = ev.touches ? ev.touches[0].clientX : ev.clientX, cy = ev.touches ? ev.touches[0].clientY : ev.clientY; ghost.style.left = (cx - 15) + 'px'; ghost.style.top = (cy - 15) + 'px'; }
             move(e);
 
-            function moveH(ev) { if (ev.cancelable) ev.preventDefault();
-                move(ev); }
+            function moveH(ev) { if (ev.cancelable) ev.preventDefault(); move(ev); }
 
-            function end(ev) { document.removeEventListener('mousemove', moveH);
+            function end(ev) {
+                document.removeEventListener('mousemove', moveH);
                 document.removeEventListener('mouseup', end);
                 document.removeEventListener('touchmove', moveH);
-                document.removeEventListener('touchend', end); var cx = ev.changedTouches ? ev.changedTouches[0].clientX : ev.clientX,
+                document.removeEventListener('touchend', end);
+                var cx = ev.changedTouches ? ev.changedTouches[0].clientX : ev.clientX,
                     cy = ev.changedTouches ? ev.changedTouches[0].clientY : ev.clientY,
-                    cr = document.getElementById('pdf-container').getBoundingClientRect(); if (cx >= cr.left && cx <= cr.right &&
-                    cy >= cr.top && cy <= cr.bottom) { addAnnotation(((cx - cr.left) / cr.width) * 100, ((cy - cr.top) / cr
-                        .height) * 100, '', 'text', null, null, false); }
-                ghost.remove(); }
+                    cr = document.getElementById('pdf-container').getBoundingClientRect();
+                if (cx >= cr.left && cx <= cr.right && cy >= cr.top && cy <= cr.bottom) {
+                    addAnnotation(((cx - cr.left) / cr.width) * 100, ((cy - cr.top) / cr.height) * 100, '', 'text', null, null, false);
+                }
+                ghost.remove();
+            }
             document.addEventListener('mousemove', moveH);
             document.addEventListener('mouseup', end);
             document.addEventListener('touchmove', moveH, { passive: false });
-            document.addEventListener('touchend', end); }
+            document.addEventListener('touchend', end);
+        }
 
-        function initReplacement() { document.getElementById('btn-dock-replacement').addEventListener('click', function() { if (!pdfDoc)
-                return alert('Carga un PDF primero'); var sel = window.getSelection(),
-                text = sel.toString().trim(); if (!text) return alert('Selecciona el texto primero'); var range = sel.getRangeAt(
-                    0),
-                rects = range.getClientRects(); if (rects.length === 0) return; var cr = document.getElementById('pdf-container')
-                .getBoundingClientRect(),
-                strikeRects = [],
-                valid = true; for (var i = 0; i < rects.length; i++) { var r = rects[i]; if (r.left >= cr.left && r.right <= cr
-                    .right && r.top >= cr.top && r.bottom <= cr.bottom) { strikeRects.push({ x: ((r.left - cr.left) / cr
-                            .width) * 100, y: ((r.top - cr.top) / cr.height) * 100, w: (r.width / cr.width) * 100,
-                        h: (r.height / cr.height) * 100 }); } else { valid = false; } } if (valid && strikeRects.length >
-                0) { sel.removeAllRanges();
-                addReplacement(strikeRects, text); } else { alert('La selección debe estar dentro del documento'); } });
-            document.getElementById('editor-main-container').addEventListener('click', function(e) { if (e.target === this || e.target ===
-                    document.getElementById('pdf-text-layer')) closeAllBubbles(); }); }
+        function initReplacement() {
+            document.getElementById('btn-dock-replacement').addEventListener('click', function() {
+                if (!pdfDoc) return alert('Carga un PDF primero');
+                var sel = window.getSelection(),
+                    text = sel.toString().trim();
+                if (!text) return alert('Selecciona el texto primero');
+                var range = sel.getRangeAt(0),
+                    rects = range.getClientRects();
+                if (rects.length === 0) return;
+                var cr = document.getElementById('pdf-container').getBoundingClientRect(),
+                    strikeRects = [],
+                    valid = true;
+                for (var i = 0; i < rects.length; i++) {
+                    var r = rects[i];
+                    if (r.left >= cr.left && r.right <= cr.right && r.top >= cr.top && r.bottom <= cr.bottom) {
+                        strikeRects.push({
+                            x: ((r.left - cr.left) / cr.width) * 100,
+                            y: ((r.top - cr.top) / cr.height) * 100,
+                            w: (r.width / cr.width) * 100,
+                            h: (r.height / cr.height) * 100
+                        });
+                    } else {
+                        valid = false;
+                    }
+                }
+                if (valid && strikeRects.length > 0) {
+                    sel.removeAllRanges();
+                    addReplacement(strikeRects, text);
+                } else {
+                    alert('La selección debe estar dentro del documento');
+                }
+            });
+            document.getElementById('editor-main-container').addEventListener('click', function(e) {
+                if (e.target === this || e.target === document.getElementById('pdf-text-layer')) closeAllBubbles();
+            });
+        }
 
-        (function() { var rec, chunks = [],
-                recording = false;
-            document.getElementById('btn-dock-audio').addEventListener('click', function() { if (!pdfDoc) return alert(
-                    'Carga un PDF primero'); if (!recording) { navigator.mediaDevices.getUserMedia({ audio: true }).then(
-                        function(s) { rec = new MediaRecorder(s);
+        (function() {
+            var rec, chunks = [], recording = false;
+            document.getElementById('btn-dock-audio').addEventListener('click', function() {
+                if (!pdfDoc) return alert('Carga un PDF primero');
+                if (!recording) {
+                    navigator.mediaDevices.getUserMedia({ audio: true }).then(function(s) {
+                        rec = new MediaRecorder(s);
                         rec.ondataavailable = function(e) { chunks.push(e.data); };
-                        rec.onstop = async function() { var blob = new Blob(chunks, { type: 'audio/webm' }); var key =
-                                'media_' + Date.now() + '_' + Math.random().toString(36).substr(2,
-                                9); await saveBlob(key, blob);
+                        rec.onstop = async function() {
+                            var blob = new Blob(chunks, { type: 'audio/webm' });
+                            var key = 'media_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                            await saveBlob(key, blob);
                             addAnnotation(50, 45, '', 'audio', URL.createObjectURL(blob), key);
-                            chunks = []; };
+                            chunks = [];
+                            s.getTracks().forEach(function(t) { t.stop(); });
+                        };
                         rec.start();
                         recording = true;
-                        document.getElementById('btn-dock-audio').classList.add('dock-btn-recording'); }).catch(
-                        function() { alert('Permite el micrófono'); }); } else { rec.stop();
+                        document.getElementById('btn-dock-audio').classList.add('dock-btn-recording');
+                    }).catch(function() { alert('Permite el micrófono'); });
+                } else {
+                    if (rec && rec.state === 'recording') {
+                        rec.stop();
+                    }
                     recording = false;
                     document.getElementById('btn-dock-audio').classList.remove('dock-btn-recording');
-                    rec.stream.getTracks().forEach(function(t) { t.stop(); }); } }); })();
+                }
+            });
+        })();
 
-        function initTimer() { var modal = document.getElementById('timer-modal'),
+        function initTimer() {
+            var modal = document.getElementById('timer-modal'),
                 display = document.getElementById('timer-display'),
                 bs = document.getElementById('btn-timer-start'),
                 bp = document.getElementById('btn-timer-stop'),
                 bv = document.getElementById('btn-timer-save'),
                 bc = document.getElementById('btn-timer-cancel'),
-                interval, st = 0,
-                elapsed = 0,
-                running = false;
+                interval, st = 0, elapsed = 0, running = false;
 
-            function fmt(ms) { var s = Math.floor(ms / 1000); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60)
-                    .padStart(2, '0') + '.' + String(Math.floor((ms % 1000) / 10)).padStart(2, '0'); }
-
+            function fmt(ms) { var s = Math.floor(ms / 1000); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0') + '.' + String(Math.floor((ms % 1000) / 10)).padStart(2, '0'); }
             function upd() { display.textContent = fmt(elapsed + (running ? Date.now() - st : 0)); }
-
-            function reset() { running = false;
-                clearInterval(interval);
-                elapsed = 0;
-                upd();
-                bs.classList.remove('hidden');
-                bp.classList.add('hidden');
-                bv.disabled = true; }
-            document.getElementById('btn-dock-timer').addEventListener('click', function() { if (!pdfDoc) return alert(
-                    'Carga un PDF primero');
+            function reset() { running = false; clearInterval(interval); elapsed = 0; upd(); bs.classList.remove('hidden'); bp.classList.add('hidden'); bv.disabled = true; }
+            document.getElementById('btn-dock-timer').addEventListener('click', function() {
+                if (!pdfDoc) return alert('Carga un PDF primero');
                 reset();
-                modal.classList.remove('hidden'); });
-            bs.addEventListener('click', function() { st = Date.now();
+                modal.classList.remove('hidden');
+            });
+            bs.addEventListener('click', function() {
+                st = Date.now();
                 running = true;
                 interval = setInterval(upd, 10);
                 bs.classList.add('hidden');
                 bp.classList.remove('hidden');
-                bv.disabled = true; });
-            bp.addEventListener('click', function() { running = false;
+                bv.disabled = true;
+            });
+            bp.addEventListener('click', function() {
+                running = false;
                 clearInterval(interval);
                 elapsed += Date.now() - st;
                 upd();
                 bs.classList.remove('hidden');
                 bp.classList.add('hidden');
-                bv.disabled = false; });
-            bc.addEventListener('click', function() { reset();
-                modal.classList.add('hidden'); });
-            bv.addEventListener('click', function() { var t = fmt(elapsed);
+                bv.disabled = false;
+            });
+            bc.addEventListener('click', function() { reset(); modal.classList.add('hidden'); });
+            bv.addEventListener('click', function() {
+                var t = fmt(elapsed);
                 reset();
                 modal.classList.add('hidden');
-                addAnnotation(50, 50, '', 'timer', t, null); }); }
+                addAnnotation(50, 50, '', 'timer', t, null);
+            });
+        }
 
         // ============== EXPORTACIÓN COMPLETA CON ZIP ==============
         async function exportFullBackup() {
             var data = await localforage.getItem('misnotas_projects');
             if (!data || !data.length) return alert('No hay datos para exportar');
 
-            // Mostrar progreso
             var progressModal = document.createElement('div');
             progressModal.className = 'modal-overlay';
             progressModal.innerHTML = '<div class="whatsapp-modal" style="text-align:center;"><h3>📦 Preparando respaldo...</h3><div class="progress-bar"><div class="progress-bar-fill" id="export-progress"></div></div><p style="font-size:0.85rem;color:var(--text-secondary);" id="export-status">Recopilando datos...</p></div>';
@@ -1690,7 +1762,6 @@
                 var totalItems = 0;
                 var processedItems = 0;
 
-                // Contar items totales
                 data.forEach(function(p) {
                     totalItems++;
                     for (var pg in p.annotations) totalItems += p.annotations[pg].length;
@@ -1703,45 +1774,24 @@
                     statusText.textContent = 'Procesando... ' + pct + '%';
                 }
 
-                // Preparar datos limpios
                 var cleanData = [];
                 for (var i = 0; i < data.length; i++) {
                     var p = data[i];
-                    var cp = {
-                        id: p.id,
-                        name: p.name,
-                        timestamp: p.timestamp,
-                        pdfData: p.pdfData,
-                        annotations: {}
-                    };
+                    var cp = { id: p.id, name: p.name, timestamp: p.timestamp, pdfData: p.pdfData, annotations: {} };
 
                     for (var pg in p.annotations) {
                         cp.annotations[pg] = [];
                         for (var j = 0; j < p.annotations[pg].length; j++) {
                             var ann = p.annotations[pg][j];
-                            var ca = {
-                                id: ann.id,
-                                x: ann.x,
-                                y: ann.y,
-                                text: ann.text,
-                                type: ann.type
-                            };
-
+                            var ca = { id: ann.id, x: ann.x, y: ann.y, text: ann.text, type: ann.type };
                             if (ann.type === 'replacement') {
                                 ca.rects = ann.rects;
                                 ca.originalText = ann.originalText;
                             }
-
-                            // Guardar archivo multimedia
                             if (ann.mediaKey) {
                                 var blob = await getBlob(ann.mediaKey);
                                 if (blob) {
-                                    var ext = '';
-                                    if (ann.type === 'photo') ext = '.jpg';
-                                    else if (ann.type === 'video') ext = '.webm';
-                                    else if (ann.type === 'audio') ext = '.webm';
-                                    else ext = '.bin';
-
+                                    var ext = ann.type === 'photo' ? '.jpg' : (ann.type === 'video' || ann.type === 'audio') ? '.webm' : '.bin';
                                     var fileName = 'media/' + ann.mediaKey + ext;
                                     zip.file(fileName, blob);
                                     ca.mediaFile = fileName;
@@ -1750,23 +1800,17 @@
                             } else if (ann.mediaUrl && ann.type === 'timer') {
                                 ca.mediaUrl = ann.mediaUrl;
                             }
-
                             cp.annotations[pg].push(ca);
                             updateProgress();
                         }
                     }
-
                     cleanData.push(cp);
                     updateProgress();
                 }
 
                 statusText.textContent = 'Comprimiendo archivos...';
                 progressFill.style.width = '95%';
-
-                // Agregar JSON al ZIP
                 zip.file('data.json', JSON.stringify(cleanData));
-
-                // Generar ZIP
                 var zipBlob = await zip.generateAsync({ type: 'blob' });
 
                 progressFill.style.width = '100%';
@@ -1787,7 +1831,7 @@
         function showExportOptions(zipBlob) {
             var modal = document.createElement('div');
             modal.className = 'modal-overlay';
-            modal.innerHTML = '<div class="whatsapp-modal"><h3>📤 Exportar Respaldo Completo</h3><p style="margin-bottom:14px;color:var(--text-secondary);font-size:0.85rem;">El archivo ZIP incluye todos los proyectos, PDFs, fotos, videos y audios.</p><p style="margin-bottom:12px;font-size:0.8rem;color:var(--text);"><strong>Tamaño:</strong> ' + (zipBlob.size / 1024 / 1024).toFixed(2) + ' MB</p><button class="btn btn-full" id="export-download-zip" style="margin-bottom:8px;">💾 Descargar archivo ZIP</button><button class="btn btn-whatsapp btn-full" id="export-whatsapp-zip" style="margin-bottom:8px;">📱 Enviar por WhatsApp</button><button class="btn btn-secondary btn-full" id="export-cancel-zip">Cancelar</button></div>';
+            modal.innerHTML = '<div class="whatsapp-modal"><h3>📤 Exportar Respaldo Completo</h3><p style="margin-bottom:14px;color:var(--text-secondary);font-size:0.85rem;">El archivo ZIP incluye todos los proyectos, PDFs, fotos, videos y audios.</p><p style="margin-bottom:12px;font-size:0.8rem;color:var(--text);"><strong>Tamaño:</strong> ' + (zipBlob.size / 1024 / 1024).toFixed(2) + ' MB</p><button class="btn btn-full" id="export-download-zip" style="margin-bottom:8px;">💾 Descargar y Compartir archivo ZIP</button><button class="btn btn-whatsapp btn-full" id="export-whatsapp-zip" style="margin-bottom:8px;">📱 Enviar por WhatsApp</button><button class="btn btn-secondary btn-full" id="export-cancel-zip">Cancelar</button></div>';
             document.body.appendChild(modal);
 
             var fileName = 'MisNotas_Respaldo_' + Date.now() + '.zip';
@@ -1800,6 +1844,24 @@
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
+
+                setTimeout(function() {
+                    if (navigator.share && navigator.canShare) {
+                        var file = new File([zipBlob], fileName, { type: 'application/zip' });
+                        if (navigator.canShare({ files: [file] })) {
+                            if (confirm('¿Quieres compartir el archivo descargado?')) {
+                                navigator.share({
+                                    title: 'Mis Notas - Respaldo',
+                                    text: 'Respaldo de Mis Notas',
+                                    files: [file]
+                                }).catch(function(err) {
+                                    console.log('Compartir cancelado o no soportado', err);
+                                });
+                            }
+                        }
+                    }
+                }, 800);
+
                 URL.revokeObjectURL(url);
                 modal.remove();
             });
@@ -1833,9 +1895,10 @@
                 var message = '📋 *Mis Notas - Respaldo Completo*\n\n📅 ' + new Date().toLocaleString() + '\n📦 Incluye todos los archivos multimedia\n\n_Adjunto el archivo ZIP._';
                 var file = new File([blob], fileName, { type: 'application/zip' });
                 if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                    navigator.share({ title: 'Mis Notas - Respaldo', text: message, files: [file] }).then(function() { modal
-                        .remove(); }).catch(function() { openWhatsAppFallback(number, message, blob, fileName);
-                        modal.remove(); });
+                    navigator.share({ title: 'Mis Notas - Respaldo', text: message, files: [file] }).then(function() { modal.remove(); }).catch(function() {
+                        openWhatsAppFallback(number, message, blob, fileName);
+                        modal.remove();
+                    });
                 } else {
                     openWhatsAppFallback(number, message, blob, fileName);
                     modal.remove();
@@ -1848,14 +1911,12 @@
             var whatsappUrl = 'https://wa.me/' + number.replace('+', '') + '?text=' + encodeURIComponent(message);
             var win = window.open(whatsappUrl, '_blank');
             setTimeout(function() { showWhatsAppInstructions(blob, fileName); }, 300);
-            if (!win) { alert('Permite ventanas emergentes');
-                showWhatsAppInstructions(blob, fileName); }
         }
 
         function showWhatsAppInstructions(blob, fileName) {
             var modal = document.createElement('div');
             modal.className = 'modal-overlay';
-            modal.innerHTML = '<div class="whatsapp-modal"><h3>📎 Cómo adjuntar en WhatsApp</h3><div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:10px;"><p style="font-weight:600;margin-bottom:4px;">Opción 1: Adjuntar manualmente</p><p style="font-size:0.8rem;color:var(--text-secondary);">1. Descarga el archivo 👇<br>2. En WhatsApp, toca 📎<br>3. Selecciona "Documento"<br>4. Busca y envía el archivo ZIP</p></div><button class="btn btn-full" id="download-zip-btn" style="margin-bottom:8px;">💾 Descargar archivo ZIP</button><button class="btn btn-secondary btn-full" id="close-instructions">Cerrar</button></div>';
+            modal.innerHTML = '<div class="whatsapp-modal"><h3>📎 Cómo adjuntar en WhatsApp</h3><div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:10px;"><p style="font-weight:600;margin-bottom:4px;">Opción 1: Adjuntar manualmente</p><p style="font-size:0.8rem;color:var(--text-secondary);">1. Descarga el archivo 👇<br>2. En WhatsApp, toca 📎<br>3. Selecciona "Documento"<br>4. Busca y envía el archivo ZIP</p></div><button class="btn btn-full" id="download-zip-btn" style="margin-bottom:8px;">💾 Descargar y Compartir archivo ZIP</button><button class="btn btn-secondary btn-full" id="close-instructions">Cerrar</button></div>';
             document.body.appendChild(modal);
             modal.querySelector('#download-zip-btn').addEventListener('click', function() {
                 var url = URL.createObjectURL(blob);
@@ -1866,10 +1927,8 @@
                 a.click();
                 document.body.removeChild(a);
                 setTimeout(function() {
-                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob],
-                            fileName, { type: 'application/zip' })] })) {
-                        navigator.share({ title: 'Mis Notas', files: [new File([blob], fileName, { type: 'application/zip' })] })
-                            .catch(function() {});
+                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], fileName, { type: 'application/zip' })] })) {
+                        navigator.share({ title: 'Mis Notas', files: [new File([blob], fileName, { type: 'application/zip' })] }).catch(function() {});
                     }
                 }, 500);
                 modal.remove();
@@ -1901,15 +1960,13 @@
                 var totalFiles = Object.keys(zip.files).length;
                 var processed = 0;
 
-                // Importar archivos multimedia
                 for (var i = 0; i < importedData.length; i++) {
                     var p = importedData[i];
                     for (var pg in p.annotations) {
                         for (var j = 0; j < p.annotations[pg].length; j++) {
                             var ann = p.annotations[pg][j];
                             if (ann.mediaFile) {
-                                statusText.textContent = 'Importando archivos... ' + Math.round((processed / totalFiles) * 100) +
-                                    '%';
+                                statusText.textContent = 'Importando archivos... ' + Math.round((processed / totalFiles) * 100) + '%';
                                 var zipEntry = zip.file(ann.mediaFile);
                                 if (zipEntry) {
                                     var blob = await zipEntry.async('blob');
@@ -1952,11 +2009,9 @@
             }
         }
 
-        // ============== INICIALIZACIÓN DE SINCRONIZACIÓN ==============
         function initSync() {
             document.getElementById('btn-export').addEventListener('click', function() { exportFullBackup(); });
-            document.getElementById('btn-import').addEventListener('click', function() { document.getElementById('file-import')
-                    .click(); });
+            document.getElementById('btn-import').addEventListener('click', function() { document.getElementById('file-import').click(); });
             document.getElementById('file-import').addEventListener('change', function(e) {
                 var file = e.target.files[0];
                 if (!file) return;
@@ -1965,7 +2020,6 @@
             });
         }
 
-        // ============== INICIO ==============
         function initApp() {
             initTheme();
             initCamera();
